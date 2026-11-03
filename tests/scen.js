@@ -1,5 +1,7 @@
 // corp: rulează în pagină; returnează {probe,R,errs,exportB64}
 const done=window.__done;
+// dialogul propriu de confirmare nu are cine să-l apese în teste: îl anulăm (ca vechiul confirm() închis automat)
+setInterval(()=>{const d=document.querySelector('[role=alertdialog]');if(d&&!window.__keepDlg){const b=d.querySelector('button');if(b)b.click()}},200);
 (async()=>{
  const COMMON=await (await fetch('/common.js')).text();eval(COMMON.replace(/\bconst /g,'var '));
  try{LANG='ro';applyLang()}catch(e){}
