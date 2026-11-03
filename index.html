@@ -38,7 +38,7 @@ button{min-height:44px;-webkit-user-select:none;user-select:none;-webkit-touch-c
 button{cursor:pointer;background:#2f3652}button:hover{background:#3b4468}button:disabled{opacity:.5;cursor:not-allowed}
 button.pri{background:var(--a);color:#222;border:0;font-weight:700}
 :focus-visible{outline:2px solid var(--a);outline-offset:2px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 100px;min-width:0}.row>button{flex:1 1 auto;white-space:nowrap}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 100px;min-width:0}.row>button{flex:1 1 auto;white-space:nowrap}@media(max-width:560px){.row>button,.row>label{white-space:normal;overflow-wrap:anywhere;hyphens:auto}}
 @media(max-width:520px){.row>button{flex:1 1 44%}.row>div{flex:1 1 40%}h1 small{display:block;margin:2px 0 0}}
 @media(max-height:480px) and (orientation:landscape){header{padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:6px}h1 small{display:none}}
 canvas{display:block;max-width:100%;border-radius:10px;background:#000;margin:auto}
@@ -54,7 +54,7 @@ video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-event
 .foot button{opacity:.85}
 </style>
 </head>
-<body>
+<body><noscript><p style="padding:16px;font:16px/1.5 system-ui,sans-serif">DECUPAJ are nevoie de JavaScript. / DECUPAJ needs JavaScript to run.</p></noscript>
 <header><h1>DECUPAJ<small>reels verticale din podcast — offline, fără cont, fără încărcare pe server</small></h1></header>
 <main>
 <section>
@@ -164,7 +164,7 @@ video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-event
 <script>
 'use strict';
 window.__errs=[];document.addEventListener('securitypolicyviolation',e=>{try{__errs.push('CSP: '+e.violatedDirective+' a blocat '+String(e.blockedURI).slice(0,80))}catch(_){}});window.addEventListener('error',e=>{try{if(/ResizeObserver loop/.test(e.message||''))return;__errs.push(String(e.message||'')+' @'+(e.lineno||'')+':'+(e.colno||''))}catch(_){}});window.addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String(e.reason&&e.reason.message||e.reason))}catch(_){}});
-const APPV='v18';const RMOTION=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
+const APPV='v19';const RMOTION=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
 async function verifiedText(url,hash){const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status+' la '+url);const buf=await r.arrayBuffer();let ok=false;try{const d=await crypto.subtle.digest('SHA-384',buf);let b='';new Uint8Array(d).forEach(x=>b+=String.fromCharCode(x));ok=('sha384-'+btoa(b))===hash}catch(e){ok=false}
  if(!ok&&!confirm(trStr('Biblioteca externă are altă amprentă decât cea așteptată (')+url.split('/').pop()+trStr('). Poate fi o versiune modificată. Continui oricum?')))throw new Error('integritate neconfirmată');return new TextDecoder().decode(buf)}
 
