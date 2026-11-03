@@ -500,11 +500,12 @@ async function rtPrepare(){let g=1;if($('normvol').checked){try{const d=await de
 /* randare deterministă H.264 + AAC cu WebCodecs, fără așteptare în timp real */
 async function seekTo(t){if(!HV)return;t=Math.min(Math.max(0,t),Math.max(0,dur-0.05));if(Math.abs(v.currentTime-t)<0.002&&v.readyState>=2)return;
  await new Promise(res=>{let d=false;const fin=()=>{if(d)return;d=true;clearTimeout(to);v.removeEventListener('seeked',fin);res()};const to=setTimeout(fin,3000);v.addEventListener('seeked',fin);v.currentTime=t})}
-async function exportWebCodecs(){
+async function exportWebCodecs(){try{return await exportWebCodecs0(false)}catch(e){if(e&&/cadre B/.test(e.message||'')&&!qCancel){console.warn(e);msg('Encoderul a folosit cadre B; reîncerc cu profil Baseline…');return await exportWebCodecs0(true)}throw e}}
+async function exportWebCodecs0(base){
  const needRe=$('normvol').checked||$('fade').checked||$('hpf').checked;const copy=!!MI&&!needRe;if(MI&&needRe)msg('Opțiunile audio cer recodare: nu mai copiez AAC-ul direct.');
  if(!(window.VideoEncoder&&window.VideoFrame&&(copy||(window.AudioEncoder&&window.AudioData))))throw new Error('WebCodecs indisponibil în acest browser');
  const W=cv.width,H=cv.height,FPS=30,SR=48000;
- let vcfg=null;for(const c of ['avc1.64002A','avc1.640033','avc1.640028','avc1.4D0028']){const cfg={codec:c,width:W,height:H,bitrate:6e6,framerate:FPS,latencyMode:'realtime',avc:{format:'avc'}};try{const r=await VideoEncoder.isConfigSupported(cfg);if(r&&r.supported){vcfg=cfg;break}}catch(e){}}
+ let vcfg=null;for(const c of (base?['avc1.42002A','avc1.420028','avc1.42001F']:['avc1.64002A','avc1.640033','avc1.640028','avc1.4D0028'])){const cfg={codec:c,width:W,height:H,bitrate:6e6,framerate:FPS,latencyMode:'realtime',avc:{format:'avc'}};try{const r=await VideoEncoder.isConfigSupported(cfg);if(r&&r.supported){vcfg=cfg;break}}catch(e){}}
  if(!vcfg)throw new Error('codec video H.264 indisponibil');
  let acfg=null;if(!copy){for(const extra of [{aac:{format:'aac'}},{}]){const cfg=Object.assign({codec:'mp4a.40.2',sampleRate:SR,numberOfChannels:2,bitrate:128000},extra);try{const r=await AudioEncoder.isConfigSupported(cfg);if(r&&r.supported){acfg=cfg;break}}catch(e){}}
   if(!acfg)throw new Error('codec audio AAC indisponibil')}
@@ -547,7 +548,7 @@ async function exportRealtime(){
   rec.start(IOS?undefined:250);
   {const ct=AC.currentTime,L0=sel[1]-sel[0];hp.frequency.value=$('hpf').checked?80:10;fg.gain.cancelScheduledValues(ct);if($('fade').checked&&L0>=1){const D=Math.min(.3,L0/2);fg.gain.setValueAtTime(0,ct);fg.gain.linearRampToValueAtTime(rtG,ct+D);fg.gain.setValueAtTime(rtG,Math.max(ct+D,ct+L0-D-.2));fg.gain.linearRampToValueAtTime(0,ct+Math.max(D*2,L0-.2))}else fg.gain.setValueAtTime(rtG,ct)}
   tick=setInterval(()=>{const p=(v.currentTime-sel[0])/(sel[1]-sel[0]);msg('Se înregistrează în timp real… '+Math.min(100,Math.max(0,Math.round(p*100)))+'% — nu închide și nu ascunde fila')},300);
-  await new Promise(r=>{const c=setInterval(()=>{if(v.currentTime>=sel[1]||v.ended||v.paused||qCancel){clearInterval(c);r()}},40)});
+  await new Promise((r,j)=>{let lt=-1,ls=Date.now();const c=setInterval(()=>{if(v.currentTime>=sel[1]||v.ended||v.paused||qCancel){clearInterval(c);r();return}if(v.currentTime!==lt){lt=v.currentTime;ls=Date.now()}else if(Date.now()-ls>10000){clearInterval(c);j(new Error('redarea video s-a blocat (browserul a oprit redarea). Ține fila activă sau folosește alt browser.'))}},40)});
   v.pause();rec.stop();await done;
   if(qCancel)throw new Error('anulat');
   if(!chunks.length)throw new Error('înregistrarea a ieșit goală');
