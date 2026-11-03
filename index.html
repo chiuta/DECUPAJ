@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10121a">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DECUPAJ">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>DECUPAJ — reels din podcast</title>
+<style>
+:root{--bg:#10121a;--p:#1b1f2c;--t:#eef0f6;--m:#9aa3ba;--a:#ffb347}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;font:15px/1.4 system-ui,-apple-system,sans-serif;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:var(--bg);color:var(--t)}
+header{padding:calc(14px + env(safe-area-inset-top)) 18px 14px;border-bottom:1px solid #2a2f42}
+h1{margin:0;font-size:20px;letter-spacing:2px}h1 small{color:var(--m);font-weight:400;letter-spacing:0;font-size:13px;margin-left:8px}
+main{display:grid;grid-template-columns:minmax(300px,440px) minmax(0,1fr);gap:16px;padding:16px;max-width:1400px;margin:auto;align-items:start}
+main>section{min-width:0}
+@media(min-width:801px){main>section:last-child{position:sticky;top:12px}}
+@media(min-width:1500px){main{max-width:1680px;grid-template-columns:minmax(360px,500px) minmax(0,1fr)}}
+@media(max-width:800px){main{grid-template-columns:minmax(0,1fr)}main>section:last-child{order:-1}}
+.card{background:var(--p);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:14px;color:var(--a);text-transform:uppercase;letter-spacing:1px}
+label{display:block;margin:8px 0 3px;color:var(--m);font-size:13px}
+input,select,textarea,button{-webkit-appearance:none;appearance:none;touch-action:manipulation;font:inherit;font-size:16px;color:var(--t);background:#252a3b;border:1px solid #343a52;border-radius:8px;padding:8px}
+input[type=text],select,textarea{width:100%}
+input[type=color]{padding:0;height:34px;width:60px}
+textarea{min-height:120px;font-family:ui-monospace,monospace;font-size:16px}
+button{min-height:44px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}select{min-height:44px;padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,#9aa3ba 50%),linear-gradient(135deg,#9aa3ba 50%,transparent 50%);background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat}input[type=text]{min-height:44px}input[type=checkbox]{-webkit-appearance:auto;appearance:auto;width:22px;height:22px;padding:0}input[type=color]{-webkit-appearance:auto;appearance:auto;min-height:44px}input[type=file]{max-width:100%;min-height:0;padding:6px}
+@media(max-width:800px){main{padding:10px}#wf{height:104px}}
+button{cursor:pointer;background:#2f3652}button:hover{background:#3b4468}button:disabled{opacity:.5;cursor:not-allowed}
+button.pri{background:var(--a);color:#222;border:0;font-weight:700}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1 1 100px;min-width:0}.row>button{flex:1 1 auto;white-space:nowrap}
+@media(max-width:520px){.row>button{flex:1 1 44%}.row>div{flex:1 1 40%}h1 small{display:block;margin:2px 0 0}}
+@media(max-height:480px) and (orientation:landscape){header{padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:6px}h1 small{display:none}}
+canvas{display:block;max-width:100%;border-radius:10px;background:#000;margin:auto}
+#lframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;display:block;margin-top:8px}
+#wf{width:100%;height:90px;cursor:crosshair;border-radius:8px;touch-action:none}
+#status{color:var(--m);font-size:13px;margin-top:8px;min-height:20px}#status.err{color:#ffb0a0}
+.hint{color:var(--m);font-size:12px}
+[hidden]{display:none!important}
+video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+:focus-visible{outline:3px solid #ffb347;outline-offset:2px}
+.foot{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:14px 12px calc(14px + env(safe-area-inset-bottom))}
+.foot button{opacity:.85}
+</style>
+</head>
+<body>
+<header><h1>DECUPAJ<small>reels verticale din podcast — offline, fără cont, fără încărcare pe server</small></h1></header>
+<main>
+<section>
+ <div class="card"><h2>0. Din link (YouTube, Vimeo, Dailymotion)</h2>
+  <div class="row"><input type="text" id="lurl" aria-label="Link video" placeholder="Lipește linkul videoclipului" style="flex:3 1 220px"><button id="lopen">Deschide playerul</button></div>
+  <div id="lbox" hidden>
+   <iframe id="lframe" title="Player video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+   <div class="hint" id="lpos" style="margin-top:6px">Poziție player: —</div>
+   <div class="row" style="margin-top:6px"><button id="lA">Început = acum</button><button id="lB">Sfârșit = acum</button></div>
+   <div class="row"><div><label>Început (mm:ss)</label><input type="text" id="l0" placeholder="01:12"></div><div><label>Sfârșit (mm:ss)</label><input type="text" id="l1" placeholder="01:52"></div></div>
+   <div class="row" style="margin-top:8px"><button id="lapply">Aplică pe fișierul încărcat</button></div>
+  </div>
+  <div class="hint" style="margin-top:8px">Browserul nu poate extrage imaginea sau sunetul din playerele acestor site-uri (protecție între domenii și condițiile lor de utilizare), iar DECUPAJ nu descarcă videoclipuri de pe ele. Aici alegi doar momentele în playerul oficial. Pentru reel încarci apoi <b>fișierul videoclipului tău</b> (de ex. descărcat din YouTube Studio, butonul Download de pe Vimeo sau din setările tale Dailymotion, unde ai dreptul) și selecția se aplică singură. Pentru materiale ale altora ai nevoie de acordul deținătorului drepturilor. Playerul se încarcă de pe internet.</div>
+  <div style="margin-top:10px;border-top:1px solid #343a52;padding-top:8px">
+   <label>Sau link direct către un fișier video/audio (mp4, m4a, mp3, webm… de pe serverul tău)</label>
+   <div class="row"><input type="text" id="durl" aria-label="Link direct către fișier" placeholder="https://serverul-tau.ro/podcast.mp4" style="flex:3 1 220px"><button id="dget">Încarcă fișierul</button></div>
+   <div class="hint">Funcționează doar dacă serverul permite accesul din alte pagini (CORS). Fișierul se descarcă în memoria browserului (maxim 500 MB pe computer, 100 MB pe telefon).</div>
+  </div>
+ </div>
+ <div class="card"><h2>1. Podcast</h2>
+  <input type="file" id="file" aria-label="Fișier podcast" accept="audio/*,video/*">
+  <div class="hint" id="info">Alege un fișier audio sau video (mp3, m4a, wav, mp4, webm…). Titlul, culorile și subtitrările se salvează automat în browser.</div>
+ </div>
+ <div class="card"><h2>2. Fragment</h2>
+  <canvas id="wf" width="800" height="90" tabindex="0" role="slider" aria-label="Unda sonoră a podcastului. Săgeți: mută poziția cu 5 secunde, Shift plus săgeți: 1 secundă. Tasta [ setează începutul, ] setează sfârșitul."></canvas>
+  <div class="hint">Trage pe undă ca să selectezi fragmentul sau trage de marginile lui ca să-l ajustezi; un simplu clic mută doar poziția de redare. Recomandat: 15–60 s.</div>
+  <div class="row" style="margin-top:8px"><button id="sugbtn" style="white-space:normal">✨ Sugerează momente bune</button><button id="ana" style="white-space:normal">🔎 Analizează tot episodul</button><button id="anacancel" hidden style="white-space:normal">■ Oprește analiza</button></div>
+  <div class="hint">„Analizează tot episodul” transcrie episodul pe bucăți de un minut (local, cu Whisper) și alege momentele după cuvinte, întrebări, cifre și cuvinte-cheie. Durează; poți opri oricând, iar bucățile gata se păstrează.</div>
+  <div id="sug" style="margin-top:6px;display:flex;flex-direction:column;gap:6px"></div>
+  <div class="row">
+   <div><label>Început (mm:ss)</label><input type="text" id="t0" value="00:00"></div>
+   <div><label>Sfârșit (mm:ss)</label><input type="text" id="t1" value="00:30"></div>
+  </div>
+  <div class="row" style="margin-top:8px">
+   <button id="prev">▶ Previzualizare</button><button id="stop">■ Stop</button>
+   <button id="setA">Început = acum</button><button id="setB">Sfârșit = acum</button>
+  </div>
+ </div>
+ <div class="card"><h2>3. Aspect</h2>
+  <label>Format</label>
+  <select id="fmt"><option value="1080x1920">Reels / TikTok / Shorts 9:16</option><option value="1080x1350">Instagram 4:5</option><option value="1080x1080">Pătrat 1:1</option><option value="1920x1080">Orizontal 16:9</option></select>
+  <label>Titlu</label><input type="text" id="title" value="Titlul episodului">
+  <label>Subtitlu / invitat</label><input type="text" id="sub" value="Podcast ASFAN">
+  <div class="row">
+   <div><label>Fundal 1</label><input type="color" id="c1" value="#1b2a6b"></div>
+   <div><label>Fundal 2</label><input type="color" id="c2" value="#6b1b5a"></div>
+   <div><label>Accent</label><input type="color" id="c3" value="#ffb347"></div>
+  </div>
+  <label>Imagine copertă (opțional)</label><input type="file" id="cover" accept="image/*">
+  <label>Stil undă</label>
+  <select id="wstyle"><option value="bars">Bare</option><option value="line">Linie</option><option value="circle">Cerc</option></select>
+  <div style="margin-top:8px;border-top:1px solid #343a52;padding-top:6px">
+   <label>Logo (opțional, de preferat PNG transparent)</label><input type="file" id="logo" aria-label="Logo" accept="image/*">
+   <div class="row"><div><label>Colț logo</label><select id="logopos"><option value="tr">Sus dreapta</option><option value="tl">Sus stânga</option><option value="br">Jos dreapta</option><option value="bl">Jos stânga</option></select></div><div><label>Mărime logo</label><input type="range" id="logosz" min="6" max="35" value="16" style="width:100%"></div></div>
+   <label style="display:flex;gap:8px;align-items:center;color:var(--t);margin-top:8px"><input type="checkbox" id="endon"> Cadru final (ultimele 2 secunde)</label>
+   <input type="text" id="endtxt" aria-label="Text cadru final" value="Abonează-te!" maxlength="80">
+  </div>
+  <div style="margin-top:8px;border-top:1px solid #343a52;padding-top:6px">
+   <div class="hint">Audio la export. Cer recodarea sunetului, deci AAC-ul nu se mai copiază direct din fișier:</div>
+   <label style="display:flex;gap:8px;align-items:center;color:var(--t)"><input type="checkbox" id="normvol"> Normalizează volumul</label>
+   <label style="display:flex;gap:8px;align-items:center;color:var(--t)"><input type="checkbox" id="fade"> Fade in/out audio (0,3 s)</label>
+   <label style="display:flex;gap:8px;align-items:center;color:var(--t)"><input type="checkbox" id="hpf"> Reducere zgomot grav (filtru trece-sus 80 Hz)</label>
+  </div>
+  <div id="vidopt" hidden style="margin-top:6px;border-top:1px solid #343a52;padding-top:6px">
+   <div class="hint" id="vinfo">Podcast video detectat.</div>
+   <label>Aspect video</label>
+   <select id="vlay"><option value="split">Video în cadru, titlu deasupra</option><option value="fit">Video întreg, fundal estompat</option><option value="full">Video pe tot ecranul</option></select>
+   <label>Încadrare orizontală (unde e vorbitorul)</label><input type="range" id="vx" min="0" max="100" value="50" style="width:100%">
+   <label>Zoom</label><input type="range" id="vz" min="100" max="250" value="100" style="width:100%">
+   <label style="display:flex;gap:8px;align-items:center;color:var(--t)"><input type="checkbox" id="showwave"> Arată și unda sonoră</label>
+  </div>
+ </div>
+ <div class="card"><h2>4. Subtitrări</h2>
+  <div class="row"><div><label>Stil subtitrări</label><select id="cstyle"><option value="classic">Clasic (casetă lată)</option><option value="outline">Contur</option><option value="box">Casetă pe rând</option><option value="hl">Cuvânt evidențiat</option><option value="min">Minimal</option></select></div><div><label>Poziție</label><select id="cpos"><option value="bottom">Jos</option><option value="mid">Mijloc</option><option value="top">Sus</option></select></div><div><label>Mărime</label><select id="csize"><option value="80">Mică</option><option value="100">Normală</option><option value="125">Mare</option><option value="150">Foarte mare</option></select></div></div>
+  <textarea id="caps" aria-label="Subtitrări" placeholder="Câte o linie: mm:ss text&#10;Ex:&#10;01:12 Bine ați venit&#10;01:16 Astăzi vorbim despre OZN-uri&#10;(timpul e din podcast; se acceptă și SRT)"></textarea>
+  <div class="row" style="margin-top:8px"><button id="addcap">+ Linie la poziția curentă</button><input type="file" id="srt" aria-label="Importă subtitrări" accept=".srt,.txt,.vtt"></div>
+  <div style="margin-top:10px;border-top:1px solid #343a52;padding-top:8px">
+   <div class="row">
+    <div><label>Model transcriere</label><select id="asrmodel"><option value="Xenova/whisper-base">Whisper base (~75 MB, recomandat)</option><option value="Xenova/whisper-tiny">Whisper tiny (~40 MB, rapid)</option><option value="Xenova/whisper-small">Whisper small (~250 MB, mai exact)</option></select></div>
+    <div><label>Limbă</label><select id="asrlang"><option value="romanian">Română</option><option value="english">Engleză</option><option value="french">Franceză</option><option value="german">Germană</option><option value="spanish">Spaniolă</option><option value="italian">Italiană</option><option value="hungarian">Maghiară</option><option value="auto">Automat</option></select></div>
+   </div>
+   <label id="gpurow" style="display:flex;gap:8px;align-items:center;color:var(--t);margin-top:6px" hidden><input type="checkbox" id="usegpu"> Accelerare WebGPU (dacă browserul o permite; altfel se trece automat la procesor)</label>
+   <div class="row" style="margin-top:8px"><button id="asr" style="white-space:normal">🎙 Transcrie fragmentul selectat</button><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="karaoke" checked> Subtitrări pe cuvânt</label></div>
+   <div class="hint">Transcrierea rulează în browser, doar pe fragmentul selectat. La prima folosire modelul se descarcă de pe internet (apoi rămâne în memoria browserului); restul aplicației rămâne offline. Dimensiunile sunt aproximative.</div>
+  </div>
+ </div>
+ <div class="card"><h2>5. Coadă de export</h2>
+  <div class="hint">Adaugă mai multe fragmente (fiecare cu titlul și subtitrările lui) și exportă-le pe rând, cu aceleași setări de aspect.</div>
+  <div class="row" style="margin-top:8px"><button id="qadd">+ Adaugă în coadă</button><button class="pri" id="qrun">⬇ Exportă coada</button></div>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--t);margin-top:8px"><input type="checkbox" id="qzip"> Descarcă totul într-un singur ZIP (recomandat pe telefon)</label>
+  <div id="qlist"></div><div class="hint" id="qprog" role="status" aria-live="polite"></div>
+ </div>
+</section>
+<section>
+ <div class="card"><h2>Previzualizare</h2>
+  <canvas id="cv" role="img" aria-label="Previzualizarea reelului"></canvas>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--t);margin-top:8px"><input type="checkbox" id="safe"> Arată marginile sigure (doar în previzualizare, nu apar în export)</label>
+  <div class="row" style="margin-top:12px"><button class="pri" id="export">⬇ Exportă reel</button><button id="share" hidden>📤 Salvează / Partajează</button><button id="qcancel" hidden>■ Anulează exportul</button></div>
+  <div id="status" role="status" aria-live="polite"></div>
+  <div class="hint">Pentru podcast video, cadrele apar în reel. La fișiere MP4/MOV/M4A cu AAC sunetul se copiază direct, fără recodare. Exportul încearcă mai întâi randarea directă în MP4 (H.264 + AAC), mai rapidă decât timpul real; dacă browserul nu o permite, trece la înregistrare în timp real (30 s de fragment = 30 s de așteptare, fila trebuie ținută deschisă) și produce .mp4 sau .webm, după browser.</div>
+ </div>
+</section>
+</main>
+<video id="v" aria-hidden="true" tabindex="-1" playsinline webkit-playsinline preload="auto"></video>
+<footer class="foot"><button id="supp" type="button">🛟 Copiază detalii pentru suport</button></footer>
+<script>
+'use strict';
+window.__errs=[];window.addEventListener('error',e=>{try{__errs.push(String(e.message||'')+' @'+(e.lineno||'')+':'+(e.colno||''))}catch(_){}});window.addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String(e.reason&&e.reason.message||e.reason))}catch(_){}});
+const APPV='v11';const RMOTION=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
+async function verifiedText(url,hash){const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status+' la '+url);const buf=await r.arrayBuffer();let ok=false;try{const d=await crypto.subtle.digest('SHA-384',buf);let b='';new Uint8Array(d).forEach(x=>b+=String.fromCharCode(x));ok=('sha384-'+btoa(b))===hash}catch(e){ok=false}
+ if(!ok&&!confirm('Biblioteca externă are altă amprentă decât cea așteptată ('+url.split('/').pop()+'). Poate fi o versiune modificată. Continui oricum?'))throw new Error('integritate neconfirmată');return new TextDecoder().decode(buf)}
+
+const $=id=>document.getElementById(id);
+const v=$('v'),cv=$('cv'),ctx=cv.getContext('2d'),wf=$('wf'),wctx=wf.getContext('2d');
+let AC=null,src,an,dest,peaks=null,dur=0,sel=[0,30],coverImg=null,exporting=false,previewEnd=null,drag=null,prevSel=null,objUrl=null,loadTok=0,curName='',curFile=null,WT={},asrBusy=false,wcRender=false,HV=false,MI=null,ENV=null,QUEUE=[],EPI=null,outTag='',qCancel=false,batchSink=null,logoImg=null,hp=null,fg=null,anaCancel=false;
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const MOBILE=IOS||/Mobi|Android/i.test(navigator.userAgent);
+if(IOS){try{$('file').removeAttribute('accept');$('cover').removeAttribute('accept');$('srt').removeAttribute('accept')}catch(e){}if(location.protocol==='file:'){const w=document.createElement('div');w.className='card';w.style.color='#ffb0a0';w.textContent='Ai deschis fișierul local. Safari pe iPhone/iPad nu rulează corect pagini deschise din aplicația Fișiere: încarcă DECUPAJ.html pe un site HTTPS și deschide-l de acolo (exportul MP4 direct cere conexiune sigură).';document.querySelector('main').before(w)}try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}}
+const fmt=s=>{s=Math.max(0,s||0);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')};
+const parse0=s=>{const p=String(s).trim().replace(',','.').split(':').map(parseFloat);if(!p.length||p.length>3||p.some(isNaN))return NaN;return p.length==3?p[0]*3600+p[1]*60+p[2]:p.length==2?p[0]*60+p[1]:p[0]};
+const parse=s=>{const r=parse0(s);if(!isFinite(r)||r<0)return NaN;const p=String(s).trim().split(':');if(p.length>1&&p.slice(1).some(x=>parseFloat(x)>=60))return NaN;return r};
+const msg=(t,err)=>{const s=$('status');s.textContent=t;s.className=err?'err':''};
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(Array.isArray(r)?r[0]:r||0,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath()}}
+
+/* ---------- muxer MP4 minimal (H.264 + AAC), faststart ---------- */
+function mp4cat(...a){let n=0;for(const x of a)n+=x.length;const o=new Uint8Array(n);let p=0;for(const x of a){o.set(x,p);p+=x.length}return o}
+const mp4u32=n=>[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255],mp4u16=n=>[(n>>8)&255,n&255],mp4s=s=>[...s].map(c=>c.charCodeAt(0));
+const mp4a=x=>x instanceof Uint8Array?x:Uint8Array.from(x);
+function mp4box(type,...parts){const body=mp4cat(...parts.map(mp4a));return mp4cat(Uint8Array.from([...mp4u32(body.length+8),...mp4s(type)]),body)}
+function mp4full(type,ver,flags,...parts){return mp4box(type,[ver,(flags>>16)&255,(flags>>8)&255,flags&255],...parts)}
+const MP4_MATRIX=[...mp4u32(0x10000),...mp4u32(0),...mp4u32(0),...mp4u32(0),...mp4u32(0x10000),...mp4u32(0),...mp4u32(0),...mp4u32(0),...mp4u32(0x40000000)];
+function mp4desc(tag,body){const b=mp4a(body);return mp4cat(Uint8Array.from([tag,0x80,0x80,0x80,b.length]),b)}
+function mp4track(id,kind,o){ /* o: timescale, duration(in track units), samples[{data,dur,key}], entry, width,height, offset */
+ const n=o.samples.length;
+ const stts=[];let run=null;for(const s of o.samples){if(run&&run.d===s.dur)run.c++;else{run={c:1,d:s.dur};stts.push(run)}}
+ const sttsB=mp4full('stts',0,0,mp4u32(stts.length),...stts.map(r=>[...mp4u32(r.c),...mp4u32(r.d)]).map(mp4a));
+ const keys=[];o.samples.forEach((s,i)=>{if(s.key)keys.push(i+1)});
+ const stss=kind==='vide'?mp4full('stss',0,0,mp4u32(keys.length),...keys.map(k=>mp4a(mp4u32(k)))):new Uint8Array(0);
+ const stsc=mp4full('stsc',0,0,mp4u32(1),mp4u32(1),mp4u32(n),mp4u32(1));
+ const stsz=mp4full('stsz',0,0,mp4u32(0),mp4u32(n),...o.samples.map(s=>mp4a(mp4u32(s.data.length))));
+ const stco=mp4full('stco',0,0,mp4u32(1),mp4u32(o.offset));
+ const stbl=mp4box('stbl',mp4full('stsd',0,0,mp4u32(1),o.entry),sttsB,stss,stsc,stsz,stco);
+ const dinf=mp4box('dinf',mp4full('dref',0,0,mp4u32(1),mp4full('url ',0,1)));
+ const minf=mp4box('minf',kind==='vide'?mp4full('vmhd',0,1,mp4u16(0),[0,0,0,0,0,0]):mp4full('smhd',0,0,mp4u16(0),mp4u16(0)),dinf,stbl);
+ const mdhd=mp4full('mdhd',0,0,mp4u32(0),mp4u32(0),mp4u32(o.timescale),mp4u32(o.duration),mp4u16(0x55c4),mp4u16(0));
+ const hdlr=mp4full('hdlr',0,0,mp4u32(0),mp4s(kind),new Uint8Array(12),mp4s(kind==='vide'?'VideoHandler':'SoundHandler'),[0]);
+ const mdia=mp4box('mdia',mdhd,hdlr,minf);
+ const tkhd=mp4full('tkhd',0,7,mp4u32(0),mp4u32(0),mp4u32(id),mp4u32(0),mp4u32(o.movieDuration),new Uint8Array(8),mp4u16(0),mp4u16(0),mp4u16(kind==='soun'?0x100:0),mp4u16(0),MP4_MATRIX,mp4u32((o.width||0)<<16),mp4u32((o.height||0)<<16));
+ return mp4box('trak',tkhd,mdia)}
+function mp4avc1(w,h,avcC){return mp4box('avc1',new Uint8Array(6),mp4u16(1),new Uint8Array(16),mp4u16(w),mp4u16(h),mp4u32(0x480000),mp4u32(0x480000),mp4u32(0),mp4u16(1),new Uint8Array(32),mp4u16(0x18),mp4u16(0xffff),mp4box('avcC',avcC))}
+function mp4mp4a(ch,rate,asc,avgBr){const dsi=mp4desc(5,asc),dcd=mp4desc(4,[0x40,0x15,0,0,0,...mp4u32(avgBr||128000),...mp4u32(avgBr||128000),...dsi]),sl=mp4desc(6,[2]);
+ const esd=mp4desc(3,[0,0,0,...dcd,...sl]);return mp4box('mp4a',new Uint8Array(6),mp4u16(1),new Uint8Array(8),mp4u16(ch),mp4u16(16),mp4u16(0),mp4u16(0),mp4u32(rate*65536),mp4full('esds',0,0,esd))}
+/* video:{width,height,avcC,timescale,samples:[{data,dur,key}]} ; audio:{channels,sampleRate,asc,bitrate,samples:[{data,dur}]} (audio optional) */
+function buildMp4(video,audio){
+ const vdur=video.samples.reduce((a,s)=>a+s.dur,0),vms=Math.round(vdur*1000/video.timescale);
+ let adur=0,ams=0;if(audio){adur=audio.samples.reduce((a,s)=>a+s.dur,0);ams=Math.round(adur*1000/audio.sampleRate)}
+ const movieDuration=Math.max(vms,ams);
+ const ftyp=mp4box('ftyp',mp4s('isom'),mp4u32(512),mp4s('isom'),mp4s('iso2'),mp4s('avc1'),mp4s('mp41'));
+ const vbytes=video.samples.reduce((a,s)=>a+s.data.length,0),abytes=audio?audio.samples.reduce((a,s)=>a+s.data.length,0):0;
+ const build=(voff,aoff)=>{
+  const vt=mp4track(1,'vide',{timescale:video.timescale,duration:vdur,movieDuration,samples:video.samples,entry:mp4avc1(video.width,video.height,video.avcC),width:video.width,height:video.height,offset:voff});
+  const at=audio?mp4track(2,'soun',{timescale:audio.sampleRate,duration:adur,movieDuration,samples:audio.samples,entry:mp4mp4a(audio.channels,audio.sampleRate,audio.asc,audio.bitrate),offset:aoff}):new Uint8Array(0);
+  const mvhd=mp4full('mvhd',0,0,mp4u32(0),mp4u32(0),mp4u32(1000),mp4u32(movieDuration),mp4u32(0x10000),mp4u16(0x100),mp4u16(0),new Uint8Array(8),MP4_MATRIX,new Uint8Array(24),mp4u32(audio?3:2));
+  return mp4box('moov',mvhd,vt,at)};
+ const moovLen=build(0,0).length,mdatStart=ftyp.length+moovLen+8;
+ const moov=build(mdatStart,mdatStart+vbytes);
+ const mdatHdr=mp4cat(Uint8Array.from([...mp4u32(8+vbytes+abytes),...mp4s('mdat')]));
+ return mp4cat(ftyp,moov,mdatHdr,...video.samples.map(s=>s.data),...(audio?audio.samples.map(s=>s.data):[]))}
+/* ---------- demuxer MP4/MOV (doar pista audio AAC-LC), citește direct din fișier ---------- */
+const mp4rd=async(f,a,b)=>new Uint8Array(await f.slice(a,b).arrayBuffer());
+function mp4kids(u,s,e){const out=[],dv=new DataView(u.buffer,u.byteOffset,u.byteLength);while(s+8<=e){let sz=dv.getUint32(s),hl=8;const t=String.fromCharCode(u[s+4],u[s+5],u[s+6],u[s+7]);if(sz===1){sz=Number(dv.getBigUint64(s+8));hl=16}else if(sz===0)sz=e-s;if(sz<hl||s+sz>e)break;out.push({t,s:s+hl,e:s+sz});s+=sz}return out}
+async function mp4Moov(f){let p=0;const N=f.size;while(p+8<=N){const h=await mp4rd(f,p,Math.min(N,p+16)),dv=new DataView(h.buffer);let sz=dv.getUint32(0),hl=8;const t=String.fromCharCode(h[4],h[5],h[6],h[7]);if(sz===1){if(h.length<16)return null;sz=Number(dv.getBigUint64(8));hl=16}else if(sz===0)sz=N-p;if(sz<hl)return null;if(t==='moov'){if(sz>256*1048576)return null;return mp4rd(f,p+hl,p+sz)}p+=sz}return null}
+const MP4_SR=[96000,88200,64000,48000,44100,32000,24000,22050,16000,12000,11025,8000,7350];
+function mp4Esds(u,s,e){ /* întoarce ASC sau null */
+ let p=s+4;const len=()=>{let n=0,b;do{b=u[p++];n=(n<<7)|(b&127)}while(b&128&&p<e);return n};
+ if(u[p++]!==3)return null;len();p+=2;const fl=u[p++];if(fl&0x80)p+=2;if(fl&0x40)p+=1+u[p];if(fl&0x20)p+=2;
+ if(u[p++]!==4)return null;len();if(u[p]!==0x40)return null;p+=13;
+ if(u[p++]!==5)return null;const n=len();return u.slice(p,p+n)}
+async function mp4AudioInfo(f){
+ const moov=await mp4Moov(f);if(!moov)return null;const dv=new DataView(moov.buffer,moov.byteOffset,moov.byteLength);
+ for(const tr of mp4kids(moov,0,moov.length).filter(k=>k.t==='trak')){
+  const mdia=mp4kids(moov,tr.s,tr.e).find(k=>k.t==='mdia');if(!mdia)continue;const mk=mp4kids(moov,mdia.s,mdia.e);
+  const hdlr=mk.find(k=>k.t==='hdlr'),mdhd=mk.find(k=>k.t==='mdhd'),minf=mk.find(k=>k.t==='minf');if(!hdlr||!mdhd||!minf)continue;
+  if(String.fromCharCode(moov[hdlr.s+8],moov[hdlr.s+9],moov[hdlr.s+10],moov[hdlr.s+11])!=='soun')continue;
+  const ts=moov[mdhd.s]===1?dv.getUint32(mdhd.s+20):dv.getUint32(mdhd.s+12);
+  const stbl=mp4kids(moov,minf.s,minf.e).find(k=>k.t==='stbl');if(!stbl)continue;const sk=mp4kids(moov,stbl.s,stbl.e),g=t=>sk.find(k=>k.t===t);
+  const stsd=g('stsd'),stts=g('stts'),stsc=g('stsc'),stsz=g('stsz'),stco=g('stco')||g('co64');if(!stsd||!stts||!stsc||!stsz||!stco)continue;
+  const ent=mp4kids(moov,stsd.s+8,stsd.e)[0];if(!ent||ent.t!=='mp4a')continue;
+  const ver=dv.getUint16(ent.s+8);const ch0=dv.getUint16(ent.s+16);const cs=ent.s+28+(ver===1?16:ver===2?36:0);
+  const ck=mp4kids(moov,cs,ent.e);let esds=ck.find(k=>k.t==='esds');if(!esds){const w=ck.find(k=>k.t==='wave');if(w)esds=mp4kids(moov,w.s,w.e).find(k=>k.t==='esds')}if(!esds)continue;const asc=mp4Esds(moov,esds.s,esds.e);if(!asc||asc.length<2)continue;
+  const aot=asc[0]>>3,sri=((asc[0]&7)<<1)|(asc[1]>>7),chan=(asc[1]>>3)&15;if(aot!==2||sri>12||!chan)continue;
+  /* tabele */
+  const nS=dv.getUint32(stsz.s+8),fixed=dv.getUint32(stsz.s+4);if(!nS||nS>5e7||(!fixed&&12+4*nS>stsz.e-stsz.s))continue;const size=new Uint32Array(nS);for(let i=0;i<nS;i++)size[i]=fixed||dv.getUint32(stsz.s+12+i*4);
+  const nT=dv.getUint32(stts.s+4);if(8+8*nT>stts.e-stts.s)continue;const dur=new Uint32Array(nS),dts=new Float64Array(nS);{let k=0,t=0;for(let i=0;i<nT&&k<nS;i++){const c=dv.getUint32(stts.s+8+i*8),d=dv.getUint32(stts.s+12+i*8);for(let j=0;j<c&&k<nS;j++){dur[k]=d;dts[k]=t;t+=d;k++}}}
+  const is64=stco.t==='co64',nC=dv.getUint32(stco.s+4);if(8+(is64?8:4)*nC>stco.e-stco.s)continue;const co=i=>is64?Number(dv.getBigUint64(stco.s+8+i*8)):dv.getUint32(stco.s+8+i*4);
+  const nR=dv.getUint32(stsc.s+4);if(8+12*nR>stsc.e-stsc.s)continue;const off=new Float64Array(nS);{let k=0;for(let r=0;r<nR;r++){const fc=dv.getUint32(stsc.s+8+r*12),spc=dv.getUint32(stsc.s+12+r*12),nx=r+1<nR?dv.getUint32(stsc.s+8+(r+1)*12):nC+1;for(let c=fc;c<nx&&c<=nC&&k<nS;c++){let o=co(c-1);for(let j=0;j<spc&&k<nS;j++){off[k]=o;o+=size[k];k++}}}if(k<nS)continue}
+  let bytes=0;for(let i=0;i<nS;i++)bytes+=size[i];
+  return{asc,channels:chan,sampleRate:MP4_SR[sri],ts,n:nS,off,size,dts,dur,bytes,duration:nS?(dts[nS-1]+dur[nS-1])/ts:0}}
+ return null}
+/* indicii eșantioanelor pentru [t0,t1]; pre = eșantioane în plus înainte (încălzirea decodorului) */
+function mp4Range(I,t0,t1,pre){const T0=t0*I.ts,T1=t1*I.ts;let lo=0,hi=I.n-1,a=0;while(lo<=hi){const m=(lo+hi)>>1;if(I.dts[m]<=T0){a=m;lo=m+1}else hi=m-1}
+ lo=0;hi=I.n-1;let b=I.n;while(lo<=hi){const m=(lo+hi)>>1;if(I.dts[m]>=T1){b=m;hi=m-1}else lo=m+1}
+ return{i0:Math.max(0,a-(pre||0)),i1:Math.min(I.n,Math.max(b,a+1))}}
+/* citește eșantioanele [i0,i1) în ferestre unite (max 16 MB, goluri până la 256 KB) */
+async function mp4Samples(I,f,i0,i1,onp){const out=new Array(i1-i0);let i=i0;const GAP=262144,WIN=16*1048576;
+ while(i<i1){let j=i,start=I.off[i],end=I.off[i]+I.size[i];while(j+1<i1&&I.off[j+1]>=end&&I.off[j+1]-end<=GAP&&I.off[j+1]+I.size[j+1]-start<=WIN){j++;end=Math.max(end,I.off[j]+I.size[j])}
+  const buf=await mp4rd(f,start,end);if(buf.length<end-start)throw new Error('fișier trunchiat sau corupt (citire incompletă)');for(let k=i;k<=j;k++){const o=I.off[k]-start;out[k-i]={data:buf.slice(o,o+I.size[k]),dur:I.dur[k]}}
+  i=j+1;if(onp)onp((i-i0)/(i1-i0))}
+ return out}
+/* MP4 doar audio din eșantioane AAC */
+function mp4AudioOnly(I,samples){const dur=samples.reduce((a,s)=>a+s.dur,0),ms=Math.round(dur*1000/I.ts),bytes=samples.reduce((a,s)=>a+s.data.length,0);
+ const ftyp=mp4box('ftyp',mp4s('M4A '),mp4u32(0),mp4s('M4A '),mp4s('isom'),mp4s('mp42'));
+ const build=off=>{const tr=mp4track(1,'soun',{timescale:I.ts,duration:dur,movieDuration:ms,samples:samples,entry:mp4mp4a(I.channels,I.sampleRate,I.asc,128000),offset:off});
+  const mvhd=mp4full('mvhd',0,0,mp4u32(0),mp4u32(0),mp4u32(1000),mp4u32(ms),mp4u32(0x10000),mp4u16(0x100),mp4u16(0),new Uint8Array(8),MP4_MATRIX,new Uint8Array(24),mp4u32(2));return mp4box('moov',mvhd,tr)};
+ const ml=build(0).length,off=ftyp.length+ml+8;return mp4cat(ftyp,build(off),Uint8Array.from([...mp4u32(8+bytes),...mp4s('mdat')]),...samples.map(s=>s.data))}
+/* extrage [t0,t1] ca MP4 audio; întoarce octeții și momentul de start al primului eșantion */
+async function mp4Extract(I,f,t0,t1,pre,onp){const {i0,i1}=mp4Range(I,Math.max(0,t0),Math.min(I.duration,t1),pre);const s=await mp4Samples(I,f,i0,i1,onp);return{bytes:mp4AudioOnly(I,s),start:I.dts[i0]/I.ts,i0,i1}}
+
+
+/* ---------- spectru (FFT) pentru randarea offline ---------- */
+function fftInPlace(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t}}
+ for(let len=2;len<=n;len<<=1){const ang=-2*Math.PI/len,wr=Math.cos(ang),wi=Math.sin(ang);for(let i=0;i<n;i+=len){let cr=1,ci=0;for(let k=0;k<len/2;k++){const a=i+k,b=a+len/2;const tr=re[b]*cr-im[b]*ci,ti=re[b]*ci+im[b]*cr;re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;const nr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=nr}}}}
+function spectrumBytes(mono,endIdx,prev,out){const N=256,re=new Float32Array(N),im=new Float32Array(N);
+ for(let i=0;i<N;i++){const k=endIdx-N+i;const x=k>=0&&k<mono.length?mono[k]:0;re[i]=x*(0.5-0.5*Math.cos(2*Math.PI*i/(N-1)))}
+ fftInPlace(re,im);for(let i=0;i<128;i++){const mag=Math.hypot(re[i],im[i])/N;prev[i]=0.8*prev[i]+0.2*mag;const db=20*Math.log10(prev[i]+1e-12);out[i]=Math.max(0,Math.min(255,Math.round((db+100)/70*255)))}}
+/* ---------- cuvinte → linii de subtitrare ---------- */
+function normWords(chunks){const w=[];for(const c of chunks||[]){const t=String(c.text||'').trim();if(!t)continue;const ts=c.timestamp||[];w.push({t,s:ts[0],e:ts[1]})}return w}
+function wordsValid(w,fragLen){if(!w.length)return false;let prev=-1;const distinct=new Set();for(const x of w){if(typeof x.s!=='number'||isNaN(x.s))return false;if(x.e==null||isNaN(x.e))x.e=x.s+0.3;if(x.s<prev-0.05||x.e<x.s-0.001||x.s>fragLen+2)return false;prev=x.s;distinct.add(x.s.toFixed(2))}return w.length<4||distinct.size>=Math.max(2,w.length*0.5)}
+function spreadSegments(segs){const out=[];for(const sg of segs||[]){const words=String(sg.text||'').trim().split(/\s+/).filter(Boolean);if(!words.length)continue;const ts=sg.timestamp||[];let s=typeof ts[0]==='number'?ts[0]:0,e=typeof ts[1]==='number'?ts[1]:s+words.length*0.35;if(e<=s)e=s+words.length*0.35;const tot=words.reduce((a,x)=>a+x.length+1,0);let p=s;for(const x of words){const d=(e-s)*(x.length+1)/tot;out.push({t:x,s:p,e:p+d});p+=d}}return out}
+function groupWords(words,off){const lines=[];let cur=[];const flush=()=>{if(cur.length){lines.push({s:cur[0].s,e:cur[cur.length-1].e,words:cur});cur=[]}};
+ for(const x of words){const w={t:x.t,s:x.s+off,e:x.e+off};if(cur.length){const gap=w.s-cur[cur.length-1].e;const len=cur.map(c=>c.t).join(' ').length+1+w.t.length;if(gap>0.7||len>30||cur.length>=7)flush()}cur.push(w);if(/[.!?…]$/.test(w.t))flush()}flush();
+ for(let i=0;i<lines.length;i++){const nx=lines[i+1];lines[i].e=nx&&nx.s-lines[i].e<0.5?nx.s:lines[i].e+0.25}return lines}
+function fmtd(s){s=Math.max(0,s||0);const m=Math.floor(s/60),r=s-m*60;return String(m).padStart(2,'0')+':'+r.toFixed(2).padStart(5,'0')}
+function layoutWords(c,words,mw){const sp=c.measureText(' ').width;const lines=[];let cur=[],w0=0;for(const w of words){const ww=c.measureText(w.t).width;if(cur.length&&w0+sp+ww>mw){lines.push({items:cur,w:w0});cur=[];w0=0}if(cur.length)w0+=sp;cur.push({w,x:w0,ww});w0+=ww}if(cur.length)lines.push({items:cur,w:w0});return lines}
+
+/* ---------- salvare automată proiect ---------- */
+const FIELDS=['title','sub','c1','c2','c3','fmt','wstyle','caps','vlay','vx','vz','cstyle','cpos','csize','logopos','logosz','endtxt'],CHECKS=['normvol','fade','hpf','endon','usegpu'];
+const P={k:'decupaj.proj',load(){try{return JSON.parse(localStorage.getItem(P.k)||'null')||{}}catch(e){return {}}},
+ save(){try{const o={fileName:curName,sel,wt:WT,queue:QUEUE};FIELDS.forEach(f=>o[f]=$(f).value);CHECKS.forEach(f=>o['c_'+f]=$(f).checked);localStorage.setItem(P.k,JSON.stringify(o))}catch(e){}}};
+let saveT=null;const saveSoon=()=>{clearTimeout(saveT);saveT=setTimeout(P.save,400)};
+const saved=P.load();FIELDS.forEach(f=>{if(typeof saved[f]==='string'){const el=$(f);if(el.tagName!=='SELECT'||[...el.options].some(o=>o.value===saved[f]))el.value=saved[f]}});
+if(saved.wt&&typeof saved.wt==='object')WT=saved.wt;
+$('usegpu').checked=!MOBILE;$('qzip').checked=MOBILE;CHECKS.forEach(f=>{if(typeof saved['c_'+f]==='boolean')$(f).checked=saved['c_'+f]});
+FIELDS.concat(CHECKS).forEach(f=>{$(f).addEventListener('input',saveSoon);$(f).addEventListener('change',saveSoon)});
+
+function size(){const dpr=Math.min(3,window.devicePixelRatio||1);try{const cw=Math.round((wf.clientWidth||800)*dpr),ch=Math.round((wf.clientHeight||90)*dpr);if(cw>10&&(wf.width!==cw||wf.height!==ch)){wf.width=cw;wf.height=ch;drawWf()}}catch(e){}
+ const[w,h]=$('fmt').value.split('x').map(Number);if(exporting)return;cv.width=w;cv.height=h;const vh=(window.visualViewport&&visualViewport.height)||innerHeight;const narrow=innerWidth<=800;const maxH=narrow?Math.max(220,Math.min(vh*.52,640)):Math.max(300,Math.min(vh-200,900));const avail=Math.max(100,cv.parentElement.clientWidth-28);const sc=Math.min(1,maxH/h,avail/w);cv.style.width=Math.floor(w*sc)+'px';cv.style.height=Math.floor(h*sc)+'px'}
+$('fmt').onchange=size;addEventListener('resize',size);addEventListener('orientationchange',()=>setTimeout(size,250));try{window.visualViewport&&visualViewport.addEventListener('resize',size);window.ResizeObserver&&new ResizeObserver(size).observe(wf.parentElement)}catch(e){}size();
+function initAudio(){if(AC)return;AC=new(window.AudioContext||window.webkitAudioContext)();src=AC.createMediaElementSource(v);an=AC.createAnalyser();an.fftSize=256;dest=AC.createMediaStreamDestination();src.connect(an);hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=10;fg=AC.createGain();an.connect(hp);hp.connect(fg);fg.connect(dest);an.connect(AC.destination)}
+function normSel(){for(let i=0;i<2;i++)if(!isFinite(sel[i]))sel[i]=i?dur:0;sel[0]=Math.max(0,Math.min(sel[0],dur));sel[1]=Math.max(0,Math.min(sel[1],dur));if(sel[0]>sel[1])sel=[sel[1],sel[0]];$('t0').value=fmt(sel[0]);$('t1').value=fmt(sel[1])}
+function syncSel(){normSel();drawWf();saveSoon()}
+async function loadFile(f){if(!f||exporting)return;if(asrBusy){msg('Așteaptă să se termine transcrierea înainte să schimbi fișierul.',true);return}const my=++loadTok;v.pause();previewEnd=null;peaks=null;ENV=null;EPI=null;dur=0;drawWf();curName=f.name;curFile=f;
+ if(objUrl)URL.revokeObjectURL(objUrl);objUrl=URL.createObjectURL(f);v.src=objUrl;$('info').textContent=f.name+' — se citește…';msg('');
+ const ok=await new Promise(r=>{v.onloadedmetadata=()=>r(true);v.onerror=()=>r(false)});v.onloadedmetadata=v.onerror=null;if(my!==loadTok)return;
+ if(!ok||!isFinite(v.duration)||v.duration<=0){$('info').textContent='Fișier nesuportat sau fără durată cunoscută.';msg('Browserul nu poate citi acest fișier (sau nu are durată, ca unele înregistrări webm). Încearcă mp3/m4a/mp4.',true);return}
+ dur=v.duration;sel=[0,Math.min(30,dur)];
+ const sv=P.load();QUEUE=sv.fileName===f.name?qSan(sv.queue,dur):[];renderQueue();if(sv.fileName===f.name&&Array.isArray(sv.sel)&&sv.sel.every(x=>typeof x==='number'&&isFinite(x))&&sv.sel[1]>sv.sel[0]){sel=[...sv.sel];msg('Selecția salvată pentru acest fișier a fost restaurată.')}
+ {const ls=linkSel();if(ls&&ls[1]>ls[0]&&ls[1]<=dur+0.5){sel=ls;msg('Selecția aleasă în player a fost aplicată fragmentului.')}}
+ syncSel();$('info').textContent=f.name+' — durată '+fmt(dur);
+ HV=v.videoWidth>0;$('vidopt').hidden=!HV;MI=null;MI=await probeMp4(f);if(my!==loadTok)return;
+ const base=f.name+' — durată '+fmt(dur)+(HV?' · video '+v.videoWidth+'×'+v.videoHeight:'')+(MI?' · audio AAC citit direct din fișier':'');$('info').textContent=base;
+ if(HV)$('vinfo').textContent='Podcast video: '+v.videoWidth+'×'+v.videoHeight+'. Cadrele video apar în reel; alege aspectul și încadrarea.';
+ try{v.currentTime=Math.min(Math.max(0,dur-0.05),sel[0]+0.01)}catch(e){}
+ const pkOK=MI?MI.bytes<=(MOBILE?25:200)*MB:f.size<=(MOBILE?25:90)*MB;
+ if(pkOK){try{const sg=await decodeSegment(0,dur,8000,false,p=>{if(my===loadTok)$('info').textContent=f.name+' — se citește audio… '+Math.round(p*100)+'%'});if(my!==loadTok)return;
+   const d=sg.chs[0],N=800,step=Math.max(1,Math.floor(d.length/N));const pk=new Float32Array(N);for(let i=0;i<N;i++){let m=0;for(let j=0;j<step;j+=Math.max(1,step>>7)){const x=Math.abs(d[i*step+j]||0);if(x>m)m=x}pk[i]=m}peaks=pk;const FR=4000,nf=Math.ceil(d.length/FR),ev=new Float32Array(nf);for(let i=0;i<nf;i++){let a=0,c=0;for(let j=i*FR;j<Math.min(d.length,(i+1)*FR);j+=2){a+=d[j]*d[j];c++}ev[i]=c?Math.sqrt(a/c):0;if(i%150===149){await yieldUI();if(my!==loadTok)return}}ENV=ev}catch(err){peaks=null;ENV=null}
+  if(my===loadTok){$('info').textContent=base;drawWf()}}
+ else $('info').textContent=base+' (fișier mare: unda nu e desenată, folosește minutele)'}
+$('file').onchange=e=>{const f=e.target.files[0];e.target.value='';loadFile(f)};
+/* ---------- din link: player oficial + alegerea momentelor ---------- */
+const LP={k:null,id:null,t:0};
+function parseLink(u){u=(u||'').trim();let m;
+ if(m=u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/))return{k:'yt',id:m[1]};
+ if(m=u.match(/vimeo\.com\/(?:[^?#]*\/)?(\d+)(?:\/([0-9a-f]+))?/))return{k:'vi',id:m[1],h:m[2]};
+ if(m=u.match(/(?:dailymotion\.com\/(?:video|embed\/video)\/|dai\.ly\/)([a-z0-9]+)/i))return{k:'dm',id:m[1]};return null}
+const linkSel=()=>{const a=parse($('l0').value),b=parse($('l1').value);return isNaN(a)||isNaN(b)||!$('l0').value||!$('l1').value?null:[a,b]};
+function showLP(){$('lpos').textContent='Poziție player: '+fmt(LP.t)+(LP.k?' · dacă nu se actualizează, scrie momentele de mână în câmpurile de mai jos':'')}
+$('lopen').onclick=async()=>{const L=parseLink($('lurl').value);if(!L){msg('Linkul nu pare de YouTube, Vimeo sau Dailymotion.',true);return}
+ LP.k=L.k;LP.id=L.id;LP.t=0;const fr=$('lframe');const org=location.protocol.startsWith('http')?'&origin='+encodeURIComponent(location.origin):'';
+ fr.src=L.k==='yt'?'https://www.youtube-nocookie.com/embed/'+L.id+'?enablejsapi=1&rel=0&playsinline=1'+org:L.k==='vi'?'https://player.vimeo.com/video/'+L.id+(L.h?'?h='+L.h:''):'https://www.dailymotion.com/embed/video/'+L.id+'?api=postMessage';
+ $('lbox').hidden=false;showLP();msg('');
+ fr.onload=()=>{try{const w=fr.contentWindow;if(LP.k==='yt'){w.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*');w.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['onStateChange'],id:1,channel:'widget'}),'*')}
+  else if(LP.k==='vi'){for(const ev of ['timeupdate','play','pause','seeked'])w.postMessage(JSON.stringify({method:'addEventListener',value:ev}),'*')}}catch(e){}};
+ try{const u=L.k==='vi'?'https://vimeo.com/api/oembed.json?url='+encodeURIComponent('https://vimeo.com/'+L.id):L.k==='dm'?'https://www.dailymotion.com/services/oembed?format=json&url='+encodeURIComponent('https://www.dailymotion.com/video/'+L.id):null;
+  if(u){const r=await fetch(u);if(r.ok){const j=await r.json();if(j.title&&$('title').value==='Titlul episodului'){$('title').value=j.title;saveSoon()}}}}catch(e){}};
+addEventListener('message',e=>{const fr=$('lframe');if(!LP.k||!fr||e.source!==fr.contentWindow)return;let d=e.data;
+ try{if(LP.k==='yt'){d=typeof d==='string'?JSON.parse(d):d;if(d&&d.info&&typeof d.info.currentTime==='number')LP.t=d.info.currentTime}
+  else if(LP.k==='vi'){d=typeof d==='string'?JSON.parse(d):d;const x=d&&d.data&&(d.data.seconds!==undefined?d.data.seconds:d.data.time);if(typeof x==='number')LP.t=x}
+  else{const q=new URLSearchParams(String(d));const t=q.get('time');if(t!==null&&!isNaN(+t))LP.t=+t}}catch(_){}
+ showLP()});
+$('lA').onclick=()=>{$('l0').value=fmt(LP.t);if(!$('l1').value||parse($('l1').value)<=LP.t)$('l1').value=fmt(LP.t+30)};
+$('lB').onclick=()=>{$('l1').value=fmt(LP.t)};
+$('lapply').onclick=()=>{const ls=linkSel();if(!dur){msg('Încarcă mai întâi fișierul videoclipului (secțiunea 1).',true);return}if(!ls||ls[1]<=ls[0]){msg('Completează un început și un sfârșit valide.',true);return}
+ sel=[Math.min(ls[0],dur),Math.min(ls[1],dur)];syncSel();if(HV&&v.paused){try{v.currentTime=sel[0]}catch(e){}}msg('Selecția a fost aplicată.')};
+/* link direct către fișier */
+$('dget').onclick=async()=>{const url=$('durl').value.trim();if(!/^https?:\/\//i.test(url)){msg('Introdu un link care începe cu http:// sau https://',true);return}
+ if(parseLink(url)){msg('Acesta e un link de pagină (YouTube/Vimeo/Dailymotion), nu un fișier. Folosește secțiunea de mai sus pentru player, apoi încarcă fișierul tău.',true);return}
+ const cap=(MOBILE?100:500)*1048576;$('dget').disabled=true;
+ try{msg('Se conectează…');const r=await fetch(url);if(!r.ok)throw new Error('serverul a răspuns '+r.status);const tot=+r.headers.get('content-length')||0;if(tot&&tot>cap)throw new Error('fișierul are '+(tot/1048576|0)+' MB, peste limita de '+(cap/1048576)+' MB');
+  const rd=r.body.getReader();const parts=[];let got=0;for(;;){const{done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;if(got>cap)throw new Error('fișier peste limita de '+(cap/1048576)+' MB');msg('Se descarcă… '+(tot?Math.round(got*100/tot)+'%':(got/1048576|0)+' MB'))}
+  let name=decodeURIComponent((new URL(url).pathname.split('/').pop()||'video.mp4'));if(!/\.\w{2,4}$/.test(name))name+='.mp4';
+  const type=r.headers.get('content-type')||'';await loadFile(new File(parts,name,{type:type.startsWith('video/')||type.startsWith('audio/')?type:''}))}
+ catch(err){msg('Nu am putut încărca fișierul: '+(err&&err.message||err)+(/Failed to fetch|NetworkError|Load failed/i.test(String(err&&err.message))?' — de obicei serverul nu permite accesul din alte pagini (CORS). Descarcă fișierul și încarcă-l de la secțiunea 1.':''),true)}
+ finally{$('dget').disabled=false}};
+$('t0').onchange=()=>{const x=parse($('t0').value);if(!isNaN(x))sel[0]=x;syncSel();if(HV&&v.paused&&!exporting){try{v.currentTime=sel[0]}catch(e){}}};
+$('t1').onchange=()=>{const x=parse($('t1').value);if(!isNaN(x))sel[1]=x;syncSel()};
+$('setA').onclick=()=>{sel[0]=v.currentTime;syncSel()};$('setB').onclick=()=>{sel[1]=v.currentTime;syncSel()};
+
+/* ---------- sugestii automate de momente (energie + pauze, local) ---------- */
+function suggest(){if(!ENV||!dur)return null;const fr=0.5,n=ENV.length;if(n<8)return[];
+ const srt=Array.from(ENV).sort((a,b)=>a-b),med=srt[n>>1],p90=srt[Math.floor(n*.9)]||1e-6,thr=Math.max(1e-5,med*.35);
+ const L=Math.min(n,Math.round(Math.min(40,Math.max(8,dur/2))/fr));
+ const S=new Float64Array(n+1),Q=new Float64Array(n+1),Z=new Float64Array(n+1);
+ for(let i=0;i<n;i++){S[i+1]=S[i]+ENV[i];Q[i+1]=Q[i]+ENV[i]*ENV[i];Z[i+1]=Z[i]+(ENV[i]<thr?1:0)}
+ const cand=[];for(let a=0;a+L<=n;a+=2){const m=(S[a+L]-S[a])/L,v2=Math.max(0,(Q[a+L]-Q[a])/L-m*m),z=(Z[a+L]-Z[a])/L;cand.push({a,sc:m/p90+.8*Math.sqrt(v2)/p90-1.5*z})}
+ cand.sort((x,y)=>y.sc-x.sc);const out=[];
+ for(const c of cand){if(out.length>=5)break;if(out.some(o=>Math.abs(o.a-c.a)<L*1.5))continue;out.push(c)}
+ const snap=(i,lo,hi)=>{let b=i,bv=1e9;for(let k=Math.max(0,i-12);k<=Math.min(n-1,i+12);k++){if(ENV[k]<thr*1.6&&ENV[k]<bv){bv=ENV[k];b=k}}return b};
+ const res=out.map(o=>{let a=snap(o.a),b=snap(o.a+L);if(b-a<L*.6){a=o.a;b=o.a+L}return{t0:Math.max(0,a*fr),t1:Math.min(dur,b*fr),sc:o.sc}});
+ res.sort((x,y)=>x.t0-y.t0);return res}
+$('sugbtn').onclick=()=>{$('sug').textContent='';
+ if(!dur){msg('Încarcă mai întâi un fișier.',true);return}
+ if(EPI&&EPI.key===epKey()){const r=suggestContent(EPI.words);if(r.length){renderSug(r,true);msg('Sugestii bazate pe transcrierea episodului (cuvinte, întrebări, cifre, cuvinte-cheie) și pe energia vocii. Verifică înainte de export.');return}}
+ if(!ENV){msg('Pentru fișiere foarte mari nu analizez sunetul; folosește „Analizează tot episodul” sau alege momentele manual.',true);return}
+ const r=suggest();if(!r||!r.length){msg('Fișierul e prea scurt pentru sugestii.',true);return}
+ renderSug(r,false);
+ msg('Sugestii bazate pe energia vocii și pe pauze, nu pe sensul textului. Pentru alegere după conținut folosește „Analizează tot episodul”.')};
+renderQueue();
+function drawWf(){const w=wf.width,h=wf.height;wctx.clearRect(0,0,w,h);wctx.fillStyle='#252a3b';wctx.fillRect(0,0,w,h);if(!dur)return;
+ if(peaks){wctx.fillStyle='#5b6585';for(let i=0;i<peaks.length;i++){const bh=Math.max(1,peaks[i]*h*.9);wctx.fillRect(i*w/peaks.length,(h-bh)/2,w/peaks.length-.5,bh)}}
+ const a=sel[0]/dur*w,b=sel[1]/dur*w;wctx.fillStyle='rgba(255,179,71,.3)';wctx.fillRect(a,0,b-a,h);const k=Math.max(1,w/(wf.clientWidth||800));wctx.fillStyle='#ffb347';wctx.fillRect(a-1*k,0,4*k,h);wctx.fillRect(b-3*k,0,4*k,h);
+ const c=v.currentTime/dur*w;wctx.fillStyle='#5ec8ff';wctx.fillRect(c,0,2*k,h)}
+const pos=e=>{const r=wf.getBoundingClientRect();return Math.min(dur,Math.max(0,(e.clientX-r.left)/r.width*dur))};
+const tol=()=>(MOBILE?20:12)/Math.max(1,wf.getBoundingClientRect().width)*dur;
+wf.onpointerdown=e=>{if(!dur||exporting)return;wf.setPointerCapture(e.pointerId);const p=pos(e),t=tol();
+ if(sel[1]-sel[0]>=0.5&&Math.abs(p-sel[0])<t)drag={m:'a'};else if(sel[1]-sel[0]>=0.5&&Math.abs(p-sel[1])<t)drag={m:'b'};else{drag={m:'n',a:p};prevSel=[...sel];sel=[p,p];syncSel()}};
+wf.onpointermove=e=>{if(!dur)return;const p=pos(e);
+ if(drag===null){const near=sel[1]-sel[0]>=0.5&&(Math.abs(p-sel[0])<tol()||Math.abs(p-sel[1])<tol());wf.style.cursor=near?'col-resize':'crosshair';return}
+ if(drag.m==='a')sel[0]=Math.min(p,sel[1]);else if(drag.m==='b')sel[1]=Math.max(p,sel[0]);else sel=[Math.min(drag.a,p),Math.max(drag.a,p)];syncSel()};
+const endDrag=()=>{if(drag===null)return;if(drag.m==='n'){if(sel[1]-sel[0]<0.5){const p=drag.a;sel=prevSel||[0,Math.min(30,dur)];v.currentTime=p}else v.currentTime=sel[0]}else v.currentTime=sel[0];drag=null;syncSel()};
+wf.onpointerup=endDrag;wf.onpointercancel=endDrag;
+wf.addEventListener('keydown',e=>{if(!dur||exporting)return;const step=e.shiftKey?1:5;
+ if(e.key==='ArrowRight'){v.currentTime=Math.min(dur,v.currentTime+step);e.preventDefault()}else if(e.key==='ArrowLeft'){v.currentTime=Math.max(0,v.currentTime-step);e.preventDefault()}
+ else if(e.key==='['){sel[0]=v.currentTime;syncSel();e.preventDefault()}else if(e.key===']'){sel[1]=v.currentTime;syncSel();e.preventDefault()}
+ wf.setAttribute('aria-valuetext','Poziție '+fmt(v.currentTime)+', fragment '+fmt(sel[0])+' – '+fmt(sel[1]));});
+wf.setAttribute('aria-valuemin','0');wf.setAttribute('aria-valuemax','100');wf.setAttribute('aria-valuenow','0');
+$('prev').onclick=async()=>{if(!dur||exporting)return;try{initAudio();AC.resume&&AC.resume();if(sel[1]-sel[0]<0.3)return;v.currentTime=sel[0];previewEnd=sel[1];await v.play()}catch(e){msg('Nu s-a putut reda: '+e.message,true)}};
+$('stop').onclick=()=>{if(exporting)return;v.pause();previewEnd=null};
+$('logo').onchange=e=>{const f=e.target.files[0];if(!f){logoImg=null;return}const i=new Image();i.onload=()=>{logoImg=i};i.onerror=()=>{logoImg=null;msg('Logoul nu a putut fi citit.',true)};i.src=URL.createObjectURL(f)};
+$('cover').onchange=e=>{const f=e.target.files[0];if(!f){coverImg=null;return}const i=new Image();i.onload=()=>{coverImg=i};i.onerror=()=>{coverImg=null;msg('Imaginea nu a putut fi citită.',true)};i.src=URL.createObjectURL(f)};
+$('srt').onchange=async e=>{const f=e.target.files[0];if(f){$('caps').value=(await f.text()).replace(/^﻿/,'');saveSoon()}};
+$('addcap').onclick=()=>{const c=$('caps');c.value+=(c.value&&!c.value.endsWith('\n')?'\n':'')+fmt(v.currentTime)+' ';saveSoon()};
+let capKey=null,capVal=[];
+function getCaps(){const t=$('caps').value;if(t===capKey)return capVal;capKey=t;const out=[];const tt=t.replace(/\r/g,'');
+ if(/-->/.test(tt)){tt.split(/\n\s*\n/).forEach(b=>{const L=b.trim().split('\n');const i=L.findIndex(l=>l.includes('-->'));if(i<0)return;const m=L[i].match(/(\d+:\d+:\d+[,.]\d+|\d+:\d+[,.]\d+)\s*-->\s*(\d+:\d+:\d+[,.]\d+|\d+:\d+[,.]\d+)/);if(m){const s=parse(m[1]),e=parse(m[2]);if(!isNaN(s)&&!isNaN(e))out.push({s,e,t:L.slice(i+1).join(' ').replace(/<[^>]+>/g,'')})}})}
+ else{const raw=tt.split('\n').map(l=>l.match(/^\s*(\d+:\d+(?::\d+)?(?:[.,]\d+)?)\s+(.+)$/)).filter(Boolean).map(m=>({s:parse(m[1]),t:m[2].trim(),k:m[1]+'|'+m[2].trim()})).filter(c=>!isNaN(c.s)).sort((a,b)=>a.s-b.s);
+  raw.forEach((c,i)=>{const words=WT[c.k];const nx=raw[i+1];let e;if(words&&words.length){const we=words[words.length-1].e+0.6;e=nx?Math.min(nx.s,we):we}else e=nx?nx.s:c.s+4;out.push({s:c.s,e,t:c.t,words:words&&words.length?words:null})})}
+ capVal=out;return out}
+function wrap(c,text,x,y,mw,lh,draw){const words=text.split(/\s+/);let line='',lines=[];for(const w of words){const t=line?line+' '+w:w;if(c.measureText(t).width>mw&&line){lines.push(line);line=w}else line=t}lines.push(line);if(draw)lines.forEach((l,i)=>c.fillText(l,x,y+i*lh));return lines.length}
+const bgc=document.createElement('canvas');
+function vidDraw(rx,ry,rw,rh,mode,c){const T=c||ctx,vw=v.videoWidth,vh=v.videoHeight;if(!vw||!vh)return;const z=Math.max(1,(+$('vz').value||100)/100),fx=Math.min(1,Math.max(0,(+$('vx').value||50)/100));
+ if(mode==='contain'){const sc=Math.min(rw/vw,rh/vh),dw=vw*sc,dh=vh*sc;T.drawImage(v,rx+(rw-dw)/2,ry+(rh-dh)/2,dw,dh)}
+ else{const sc=Math.max(rw/vw,rh/vh)*z,sw=Math.min(vw,rw/sc),sh=Math.min(vh,rh/sc);T.drawImage(v,(vw-sw)*fx,(vh-sh)/2,sw,sh,rx,ry,rw,rh)}}
+function blurBg(W,H){const bw=36,bh=Math.max(8,Math.round(36*H/W));if(bgc.width!==bw||bgc.height!==bh){bgc.width=bw;bgc.height=bh}vidDraw(0,0,bw,bh,'cover',bgc.getContext('2d'));ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(bgc,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(0,0,W,H)}
+function draw(tO,fdO){const W=cv.width,H=cv.height,t=tO!=null?tO:v.currentTime,acc=$('c3').value;
+ const g=ctx.createLinearGradient(0,0,W*.4,H);g.addColorStop(0,$('c1').value);g.addColorStop(1,$('c2').value);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ const HVd=HV&&v.videoWidth>0&&v.readyState>=2,vl=$('vlay').value;
+ if(HVd&&vl==='fit')blurBg(W,H);else if(HVd&&vl==='full'){vidDraw(0,0,W,H,'cover');const sg=ctx.createLinearGradient(0,0,0,H);sg.addColorStop(0,'rgba(0,0,0,.65)');sg.addColorStop(.32,'rgba(0,0,0,0)');sg.addColorStop(.6,'rgba(0,0,0,0)');sg.addColorStop(1,'rgba(0,0,0,.72)');ctx.fillStyle=sg;ctx.fillRect(0,0,W,H)}
+ const u=Math.min(W,H*.56)/1080,P2=70*u;let y=H*.07;ctx.textAlign='center';ctx.textBaseline='top';
+ if(coverImg&&!HVd){const s=Math.min(W*.6,H*.28);const r=Math.max(s/coverImg.width,s/coverImg.height);ctx.save();ctx.beginPath();ctx.roundRect((W-s)/2,y,s,s,30*u);ctx.clip();ctx.drawImage(coverImg,(W-s)/2+(s-coverImg.width*r)/2,y+(s-coverImg.height*r)/2,coverImg.width*r,coverImg.height*r);ctx.restore();y+=s+40*u}
+ let fs=72*u,nl;do{ctx.font='800 '+Math.round(fs)+'px system-ui,sans-serif';nl=wrap(ctx,$('title').value,0,0,W-2*P2,fs*1.14,false);if(nl<=3)break;fs*=.88}while(fs>24*u);
+ ctx.fillStyle='#fff';nl=wrap(ctx,$('title').value,W/2,y,W-2*P2,fs*1.14,true);y+=nl*fs*1.14+10*u;ctx.fillStyle=acc;ctx.font='600 '+Math.round(40*u)+'px system-ui,sans-serif';const snl=wrap(ctx,$('sub').value,W/2,y,W-2*P2,46*u,true);y+=snl*46*u;
+ if(HVd&&vl!=='full'){const m=P2*.5,ry=y+28*u,rh=Math.max(H*.18,Math.min(H*.46,H*.74-ry));ctx.save();ctx.beginPath();ctx.roundRect(m,ry,W-2*m,rh,24*u);ctx.clip();vidDraw(m,ry,W-2*m,rh,vl==='fit'?'contain':'cover');ctx.restore()}
+ const showW=!HVd||$('showwave').checked,wy=HVd?H*.85:H*.58,wh=HVd?H*.07:H*.14,fd=fdO||new Uint8Array(an?an.frequencyBinCount:64);if(!fdO&&an)an.getByteFrequencyData(fd);const st=$('wstyle').value;ctx.fillStyle=acc;ctx.strokeStyle=acc;ctx.lineWidth=6*u;
+ if(!showW){}else if(st=='bars'){const nb=32,bw=(W-2*P2)/nb;for(let i=0;i<nb;i++){const a=(fd[i*2]||0)/255,bh=Math.max(8*u,a*wh*1.4);ctx.beginPath();ctx.roundRect(P2+i*bw+bw*.15,wy+wh/2-bh/2,bw*.7,bh,bw*.3);ctx.fill()}}
+ else if(st=='line'){ctx.beginPath();for(let i=0;i<64;i++){const a=(fd[i]||0)/255,x=P2+i*(W-2*P2)/63,yy=wy+wh/2+(i%2?-1:1)*a*wh*.6;i?ctx.lineTo(x,yy):ctx.moveTo(x,yy)}ctx.stroke()}
+ else{const cx=W/2,cy=wy+wh/2,r0=wh*.5;ctx.beginPath();ctx.arc(cx,cy,r0,0,7);ctx.stroke();for(let i=0;i<48;i++){const a=(fd[i]||0)/255,ang=i/48*Math.PI*2,r1=r0+8*u+a*wh*.6;ctx.beginPath();ctx.moveTo(cx+Math.cos(ang)*(r0+6*u),cy+Math.sin(ang)*(r0+6*u));ctx.lineTo(cx+Math.cos(ang)*r1,cy+Math.sin(ang)*r1);ctx.stroke()}}
+ const cap=getCaps().find(c=>t>=c.s&&t<c.e);if(cap)drawCap(cap,t,W,H,u,acc);
+ const pr=sel[1]>sel[0]?Math.min(1,Math.max(0,(t-sel[0])/(sel[1]-sel[0]))):0;ctx.fillStyle='rgba(255,255,255,.2)';ctx.fillRect(P2,H-80*u,W-2*P2,10*u);ctx.fillStyle=acc;ctx.fillRect(P2,H-80*u,(W-2*P2)*pr,10*u);drawOver(t,W,H,u,acc,fdO)}
+
+/* ---------- subtitrări stilizate ---------- */
+function wrapLines(c,text,mw){const words=String(text).split(/\s+/).filter(Boolean);const lines=[];let line='';for(const w of words){const t=line?line+' '+w:w;if(c.measureText(t).width>mw&&line){lines.push(line);line=w}else line=t}lines.push(line);return lines}
+const CAPFONT='system-ui,-apple-system,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+function drawCap(cap,t,W,H,u,acc){
+ const st=$('cstyle').value,ps=$('cpos').value,k=Math.min(1.6,Math.max(.6,(+$('csize').value||100)/100)),P2=70*u,mw=W-2*P2;
+ const fsz=Math.max(10,Math.round((st==='min'?48:60)*u*k)),lh=Math.round(fsz*1.2),pad=Math.round(fsz*.33);
+ ctx.save();ctx.font=(st==='min'?'700 ':'800 ')+fsz+'px '+CAPFONT;ctx.textBaseline='top';ctx.textAlign='left';
+ const kar=!!(cap.words&&$('karaoke').checked);let L=null,TL=null,n;
+ if(kar){L=layoutWords(ctx,cap.words,mw);n=L.length}else{TL=wrapLines(ctx,cap.t,mw).map(x=>({s:x,w:ctx.measureText(x).width}));n=TL.length}
+ let by;if(ps==='top')by=H*.1;else if(ps==='mid')by=(H-n*lh)/2;else by=Math.min(H*.76,H-80*u-n*lh-60*u);
+ by=Math.max(10*u,Math.min(by,H-n*lh-30*u));
+ if(st==='classic'){ctx.fillStyle='rgba(0,0,0,.55)';ctx.beginPath();ctx.roundRect(P2*.6,by-20*u,W-P2*1.2,n*lh+40*u,24*u);ctx.fill()}
+ let cur=-1;if(kar&&st==='hl'){for(let i=0;i<cap.words.length;i++)if(t>=cap.words[i].s)cur=i}
+ const stroke=st==='outline'||st==='hl';
+ if(st==='min'){ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=Math.round(fsz*.25);ctx.shadowOffsetY=Math.round(fsz*.04)}
+ let wi=0;
+ for(let i=0;i<n;i++){const y=by+i*lh,w=kar?L[i].w:TL[i].w,x0=W/2-w/2;
+  if(st==='box'){ctx.save();ctx.shadowColor='transparent';ctx.fillStyle='rgba(0,0,0,.78)';ctx.beginPath();ctx.roundRect(x0-pad,y-fsz*.06,w+2*pad,fsz*1.2,pad);ctx.fill();ctx.restore()}
+  const put=(txt,x,col)=>{if(stroke){ctx.lineJoin='round';ctx.lineWidth=Math.max(3,fsz*.16);ctx.strokeStyle='rgba(0,0,0,.92)';ctx.strokeText(txt,x,y)}ctx.fillStyle=col;ctx.fillText(txt,x,y)};
+  if(kar){for(const it of L[i].items){const isCur=st==='hl'&&wi===cur;
+    if(isCur){ctx.save();ctx.shadowColor='transparent';ctx.fillStyle=acc;ctx.beginPath();ctx.roundRect(x0+it.x-pad*.45,y-fsz*.06,it.ww+pad*.9,fsz*1.2,pad*.6);ctx.fill();ctx.restore();ctx.fillStyle='#111';ctx.fillText(it.w.t,x0+it.x,y)}
+    else put(it.w.t,x0+it.x,st==='hl'?'#fff':(t>=it.w.s?acc:'#fff'));wi++}}
+  else put(TL[i].s,x0,'#fff')}
+ ctx.restore()}
+function drawOver(t,W,H,u,acc,fdO){
+ if($('endon').checked&&sel[1]-sel[0]>=3&&t>=sel[1]-2){const a=Math.min(1,Math.max(0,(t-(sel[1]-2))/.35));ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(8,10,24,.62)';ctx.fillRect(0,0,W,H);
+  const txt=($('endtxt').value||'').trim()||'Abonează-te!';let fs=84*u,ls;ctx.textAlign='center';ctx.textBaseline='middle';
+  do{ctx.font='800 '+Math.round(fs)+'px '+CAPFONT;ls=wrapLines(ctx,txt,W-140*u);if(ls.length<=3&&ls.every(x=>ctx.measureText(x).width<=W-140*u))break;fs*=.9}while(fs>26*u);
+  ctx.lineJoin='round';ctx.lineWidth=Math.max(3,fs*.12);ctx.strokeStyle='rgba(0,0,0,.85)';ctx.fillStyle=acc;ls.forEach((l,i)=>{const yy=H/2+(i-(ls.length-1)/2)*fs*1.2;ctx.strokeText(l,W/2,yy);ctx.fillText(l,W/2,yy)});ctx.restore()}
+ if(logoImg){const kk=Math.min(.35,Math.max(.06,(+$('logosz').value||16)/100)),m=Math.min(W,H)*.04;let lw=W*kk;const ar=logoImg.height/logoImg.width;if(lw*ar>H*.2)lw=H*.2/ar;const lhh=lw*ar,pp=$('logopos').value;const x=pp.indexOf('r')>=0?W-m-lw:m,y=pp.indexOf('b')>=0?H-m-lhh-100*u:m;ctx.save();ctx.globalAlpha=.95;ctx.drawImage(logoImg,x,y,lw,lhh);ctx.restore()}
+ if(!exporting&&!wcRender&&!fdO&&$('safe').checked){const reel=H/W>1.6,tp=reel?.115:.06,bt=reel?.22:.12,rt=reel?.13:0;ctx.save();ctx.fillStyle='rgba(255,60,60,.28)';ctx.fillRect(0,0,W,H*tp);ctx.fillRect(0,H*(1-bt),W,H*bt);if(rt){ctx.fillRect(W*(1-rt),H*.4,W*rt,H*.4)}
+  ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=Math.max(2,3*u);ctx.setLineDash([14*u,10*u]);ctx.strokeRect(W*.05,H*tp,W*(.9-rt),H*(1-bt-tp));ctx.setLineDash([]);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='top';ctx.font='700 '+Math.round(30*u)+'px '+CAPFONT;ctx.fillText('zonă acoperită de interfață',W/2,H*tp*.35);ctx.fillText('zonă acoperită de interfață',W/2,H*(1-bt)+H*bt*.35);ctx.restore()}}
+function frame(){if(wcRender)return;try{draw();if(previewEnd!==null&&v.currentTime>=previewEnd&&!exporting){v.pause();previewEnd=null}drawWf()}catch(err){msg('Eroare de desenare: '+err.message,true)}}
+(function loop(){requestAnimationFrame(loop);frame()})();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const yieldUI=()=>new Promise(r=>{const c=new MessageChannel();c.port1.onmessage=()=>r();c.port2.postMessage(0)});
+const toU8=d=>ArrayBuffer.isView(d)?new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength)):new Uint8Array(d.slice(0));
+let lastFile=null;
+function showShare(blob,ext){try{lastFile=new File([blob],'reel-'+Date.now()+'.'+ext,{type:blob.type||(ext==='mp4'?'video/mp4':'video/webm')});$('share').hidden=!(navigator.canShare&&navigator.canShare({files:[lastFile]}))}catch(e){$('share').hidden=true}}
+$('share').onclick=async()=>{try{await navigator.share({files:[lastFile],title:$('title').value||'Reel'})}catch(e){if(e&&e.name!=='AbortError')msg('Partajarea a eșuat: '+e.message,true)}};
+function saveBlob(blob,ext){if(batchSink){batchSink.push({blob,ext});return}showShare(blob,ext);const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reel-'+Date.now()+'.'+ext;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);msg('Gata — fișierul .'+ext+' ('+(blob.size/1048576).toFixed(1)+' MB).'+(IOS?' Pe iPhone/iPad apasă „Salvează / Partajează” › Salvează videoclipul, ca să ajungă în Fotografii.':' A fost descărcat.'))}
+const MB=1048576;
+async function probeMp4(f){if(!/\.(mp4|m4a|m4v|mov|3gp)$/i.test(f.name)&&!/mp4|quicktime|m4a/i.test(f.type||''))return null;try{return await mp4AudioInfo(f)}catch(e){return null}}
+/* decodează audio din [t0,t1]; pentru MP4/MOV cu AAC citește doar bucata necesară din fișier (merge și pe fișiere de ordinul GB) */
+async function decodeSegment(t0,t1,sr,strict,onp){let bytes,off=0;
+ if(MI){const ex=await mp4Extract(MI,curFile,t0,t1,2,onp);bytes=ex.bytes.buffer.slice(ex.bytes.byteOffset,ex.bytes.byteOffset+ex.bytes.byteLength);off=ex.start}
+ else{if(!curFile)throw new Error('fișierul sursă lipsește');if(curFile.size>(MOBILE?25:90)*MB)throw new Error('fișier prea mare pentru decodare în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți)');bytes=await curFile.arrayBuffer()}
+ let ac;try{ac=new AudioContext({sampleRate:sr})}catch(e){if(strict)throw new Error('AudioContext la '+sr+' Hz indisponibil');ac=new AudioContext()}
+ try{const ab=await ac.decodeAudioData(bytes);const chs=[];for(let i=0;i<ab.numberOfChannels;i++)chs.push(ab.getChannelData(i));return{chs,sr:ab.sampleRate,off}}finally{try{ac.close()}catch(e){}}}
+async function decodeRange(sampleRate){
+ const g=await decodeSegment(sel[0],sel[1],sampleRate,true);const a=Math.max(0,Math.floor((sel[0]-g.off)*g.sr)),b=Math.min(g.chs[0].length,Math.ceil((sel[1]-g.off)*g.sr));
+ const L=g.chs[0].slice(a,b),R=(g.chs[1]||g.chs[0]).slice(a,b);const mono=new Float32Array(L.length);for(let i=0;i<L.length;i++)mono[i]=(L[i]+R[i])/2;return{L,R,mono}}
+
+/* ---------- procesare audio (volum, fade, filtru trece-sus) ---------- */
+function calcGain(L,R){let pk=0,ss=0;const n=L.length;for(let i=0;i<n;i++){const a=Math.abs(L[i]),b=Math.abs(R[i]);if(a>pk)pk=a;if(b>pk)pk=b;ss+=L[i]*L[i]+R[i]*R[i]}const rms=Math.sqrt(ss/Math.max(1,2*n));if(pk<1e-4||rms<1e-5)return 1;return Math.max(.25,Math.min(8,.95/pk,.126/rms))}
+async function hpfInPlace(x,sr,fc){fc=fc||80;const w0=2*Math.PI*fc/sr,cs=Math.cos(w0),al=Math.sin(w0)/(2*.7071),a0=1+al;const b0=(1+cs)/2/a0,b1=-(1+cs)/a0,b2=b0,a1=-2*cs/a0,a2=(1-al)/a0;let x1=0,x2=0,y1=0,y2=0;
+ for(let i=0;i<x.length;i++){const xi=x[i],yi=b0*xi+b1*x1+b2*x2-a1*y1-a2*y2;x2=x1;x1=xi;y2=y1;y1=yi;x[i]=yi;if((i&0x3ffff)===0&&i)await yieldUI()}}
+async function procAudio(L,R,SR,o){if(o.hpf){await hpfInPlace(L,SR);if(R!==L)await hpfInPlace(R,SR)}
+ const g=o.norm?calcGain(L,R):1,n=L.length,nf=Math.max(1,Math.min(Math.round(.3*SR),n>>1));
+ for(let i=0;i<n;i++){let k=g;if(o.fade){if(i<nf)k*=i/nf;else if(i>=n-nf)k*=(n-1-i)/nf}L[i]*=k;if(R!==L)R[i]*=k;if((i&0x3ffff)===0&&i)await yieldUI()}
+ return{gain:g}}
+async function rtPrepare(){let g=1;if($('normvol').checked){try{const d=await decodeRange(48000);g=calcGain(d.L,d.R)}catch(e){console.warn('normalizare indisponibilă',e)}}return g}
+/* randare deterministă H.264 + AAC cu WebCodecs, fără așteptare în timp real */
+async function seekTo(t){if(!HV)return;t=Math.min(Math.max(0,t),Math.max(0,dur-0.05));if(Math.abs(v.currentTime-t)<0.002&&v.readyState>=2)return;
+ await new Promise(res=>{let d=false;const fin=()=>{if(d)return;d=true;clearTimeout(to);v.removeEventListener('seeked',fin);res()};const to=setTimeout(fin,3000);v.addEventListener('seeked',fin);v.currentTime=t})}
+async function exportWebCodecs(){
+ const needRe=$('normvol').checked||$('fade').checked||$('hpf').checked;const copy=!!MI&&!needRe;if(MI&&needRe)msg('Opțiunile audio cer recodare: nu mai copiez AAC-ul direct.');
+ if(!(window.VideoEncoder&&window.VideoFrame&&(copy||(window.AudioEncoder&&window.AudioData))))throw new Error('WebCodecs indisponibil în acest browser');
+ const W=cv.width,H=cv.height,FPS=30,SR=48000;
+ let vcfg=null;for(const c of ['avc1.64002A','avc1.640033','avc1.640028','avc1.4D0028']){const cfg={codec:c,width:W,height:H,bitrate:6e6,framerate:FPS,latencyMode:'realtime',avc:{format:'avc'}};try{const r=await VideoEncoder.isConfigSupported(cfg);if(r&&r.supported){vcfg=cfg;break}}catch(e){}}
+ if(!vcfg)throw new Error('codec video H.264 indisponibil');
+ let acfg=null;if(!copy){for(const extra of [{aac:{format:'aac'}},{}]){const cfg=Object.assign({codec:'mp4a.40.2',sampleRate:SR,numberOfChannels:2,bitrate:128000},extra);try{const r=await AudioEncoder.isConfigSupported(cfg);if(r&&r.supported){acfg=cfg;break}}catch(e){}}
+  if(!acfg)throw new Error('codec audio AAC indisponibil')}
+ const needPcm=!copy||!HV||$('showwave').checked;let L=null,R=null,mono=null;
+ if(needPcm){msg('Se pregătește audio…');({L,R,mono}=await decodeRange(SR));if(needRe){msg('Se procesează audio (volum, fade, filtru)…');await procAudio(L,R,SR,{norm:$('normvol').checked,fade:$('fade').checked,hpf:$('hpf').checked})}}
+ const N=Math.max(1,Math.round((sel[1]-sel[0])*FPS));let err=null;const vch=[],ach=[];let vdesc=null,adesc=null;
+ let copied=null;if(copy){msg('Se citește audio din fișier…');let i0=mp4Range(MI,sel[0],sel[1],0).i0;const i1=mp4Range(MI,sel[0],sel[1],0).i1;if(MI.dts[i0]<sel[0]*MI.ts&&i0+1<i1)i0++;copied=await mp4Samples(MI,curFile,i0,i1);adesc=MI.asc}
+ const venc=new VideoEncoder({output:(c,m)=>{const d=new Uint8Array(c.byteLength);c.copyTo(d);vch.push({d,ts:c.timestamp,key:c.type==='key'});if(!vdesc&&m&&m.decoderConfig&&m.decoderConfig.description)vdesc=toU8(m.decoderConfig.description)},error:e=>{err=e}});
+ const aenc=copy?null:new AudioEncoder({output:(c,m)=>{const d=new Uint8Array(c.byteLength);c.copyTo(d);ach.push({d,dur:c.duration||21333});if(!adesc&&m&&m.decoderConfig&&m.decoderConfig.description)adesc=toU8(m.decoderConfig.description)},error:e=>{err=e}});
+ wcRender=true;
+ try{venc.configure(vcfg);if(aenc){aenc.configure(acfg);
+  for(let o=0;o<L.length;o+=SR){const n=Math.min(SR,L.length-o);const data=new Float32Array(n*2);data.set(L.subarray(o,o+n),0);data.set(R.subarray(o,o+n),n);
+   const ad=new AudioData({format:'f32-planar',sampleRate:SR,numberOfFrames:n,numberOfChannels:2,timestamp:Math.round(o*1e6/SR),data});aenc.encode(ad);ad.close();if(err)throw err;while(aenc.encodeQueueSize>8)await sleep(2)}}
+  const prev=new Float32Array(128),fd=new Uint8Array(128);
+  for(let i=0;i<N;i++){if(qCancel)throw new Error('anulat');const t=sel[0]+i/FPS;if(mono)spectrumBytes(mono,Math.round(i/FPS*SR)+128,prev,fd);if(HV)await seekTo(t);draw(t,fd);
+   const fr=new VideoFrame(cv,{timestamp:Math.round(i*1e6/FPS)});venc.encode(fr,{keyFrame:i%60===0});fr.close();if(err)throw err;while(venc.encodeQueueSize>6)await sleep(2);
+   if(i%3===0){msg('Se randează MP4… '+Math.round(i/N*100)+'%');await yieldUI()}}
+  await venc.flush();if(aenc)await aenc.flush();if(err)throw err}
+ finally{wcRender=false;try{venc.close()}catch(e){}try{aenc&&aenc.close()}catch(e){}if(HV){try{v.currentTime=sel[0]}catch(e){}}}
+ if(!vdesc||!adesc||!vch.length||!(copy?copied.length:ach.length))throw new Error('encoderul nu a furnizat configurația codecului');
+ for(let i=1;i<vch.length;i++)if(vch[i].ts<vch[i-1].ts)throw new Error('encoderul a folosit cadre B (ordine neașteptată)');
+ const TS=90000;const vs=vch.map(c=>({data:c.d,key:c.key,dts:Math.round(c.ts*TS/1e6)}));vs.forEach((s,i)=>{s.dur=i+1<vs.length?Math.max(1,vs[i+1].dts-s.dts):Math.round(TS/FPS)});
+ let audio;if(copy){const k=MI.sampleRate/MI.ts;const as=copied.map(c=>({data:c.data,dur:Math.max(1,Math.round(c.dur*k))}));audio={channels:MI.channels,sampleRate:MI.sampleRate,asc:adesc,bitrate:Math.round(MI.bytes*8/Math.max(1,MI.duration)),samples:as}}
+ else{const as=ach.map(c=>({data:c.d,dur:Math.round(c.dur*SR/1e6)||1024}));audio={channels:2,sampleRate:SR,asc:adesc,bitrate:128000,samples:as}}
+ const mp4=buildMp4({width:W,height:H,avcC:vdesc,timescale:TS,samples:vs},audio);
+ saveBlob(new Blob([mp4],{type:'video/mp4'}),'mp4');return true}
+/* rezervă: înregistrare în timp real cu MediaRecorder */
+async function exportRealtime(){
+ if(!window.MediaRecorder||!cv.captureStream)throw new Error('Acest browser nu poate înregistra video din pagină. Pe iPhone/iPad ai nevoie de iOS 14.5 sau mai nou; altfel folosește un computer.');
+ let timer=null,tick=null,rec=null,rtG=1;
+ try{initAudio();await AC.resume();rtG=await rtPrepare();
+  if(cv.width*cv.height>=1080*1920&&(MOBILE||(navigator.hardwareConcurrency||8)<=4)){msg('Dispozitiv cu putere mică: la 1080×1920 pot apărea cadre pierdute. Pentru un rezultat sigur folosește un computer sau formatul 1:1.')}
+  const types=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];const mt=types.find(x=>MediaRecorder.isTypeSupported(x))||'';
+  const stream=cv.captureStream(30);dest.stream.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+  rec=new MediaRecorder(stream,mt?{mimeType:mt,videoBitsPerSecond:6e6}:{videoBitsPerSecond:6e6});const chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  const done=new Promise(r=>rec.onstop=r);
+  const pre=Math.max(0,sel[0]-0.3);v.currentTime=pre;await new Promise(r=>{const t=setTimeout(r,800);v.onseeked=()=>{clearTimeout(t);r()}});v.onseeked=null;
+  timer=setInterval(frame,33);await v.play();
+  await new Promise(r=>{const c=setInterval(()=>{if(v.currentTime>=sel[0]||v.paused){clearInterval(c);r()}},8)});
+  rec.start(IOS?undefined:250);
+  {const ct=AC.currentTime,L0=sel[1]-sel[0];hp.frequency.value=$('hpf').checked?80:10;fg.gain.cancelScheduledValues(ct);if($('fade').checked&&L0>=1){const D=Math.min(.3,L0/2);fg.gain.setValueAtTime(0,ct);fg.gain.linearRampToValueAtTime(rtG,ct+D);fg.gain.setValueAtTime(rtG,Math.max(ct+D,ct+L0-D-.2));fg.gain.linearRampToValueAtTime(0,ct+Math.max(D*2,L0-.2))}else fg.gain.setValueAtTime(rtG,ct)}
+  tick=setInterval(()=>{const p=(v.currentTime-sel[0])/(sel[1]-sel[0]);msg('Se înregistrează în timp real… '+Math.min(100,Math.max(0,Math.round(p*100)))+'% — nu închide și nu ascunde fila')},300);
+  await new Promise(r=>{const c=setInterval(()=>{if(v.currentTime>=sel[1]||v.ended||v.paused||qCancel){clearInterval(c);r()}},40)});
+  v.pause();rec.stop();await done;
+  if(qCancel)throw new Error('anulat');
+  if(!chunks.length)throw new Error('înregistrarea a ieșit goală');
+  saveBlob(new Blob(chunks,{type:mt||'video/webm'}),mt.includes('mp4')?'mp4':'webm')}
+ catch(err){try{rec&&rec.state!=='inactive'&&rec.stop()}catch(e){}v.pause();throw err}
+ finally{clearInterval(timer);clearInterval(tick);try{if(fg){fg.gain.cancelScheduledValues(0);fg.gain.value=1}if(hp)hp.frequency.value=10}catch(e){}}}
+function checkSel(a,b){const mx=(MOBILE?3:10)*60;if(b-a>mx)return 'Fragmentul e prea lung pentru export ('+Math.round((b-a)/60)+' min). Maxim '+(mx/60)+' minute'+(MOBILE?' pe telefon':'')+', ca memoria browserului să nu se umple.';if(b-a<1)return 'Selectează un fragment de cel puțin o secundă.';return ''}
+async function doExport(){let done=false;if(IOS&&!(window.VideoEncoder&&(MI||window.AudioEncoder)))msg('iPhone/iPad: această versiune de iOS nu poate randa MP4 direct, așa că înregistrez în timp real. Ține ecranul aprins și fila deschisă până la final.');
+ if(window.VideoEncoder&&(MI||window.AudioEncoder)){try{done=await exportWebCodecs()}catch(e){if(qCancel||(e&&e.message)==='anulat')throw e;console.warn(e);msg('Randarea MP4 directă nu a mers ('+(e&&e.message||e)+'). Trec la înregistrarea în timp real…');await sleep(1200)}}
+ if(!done)await exportRealtime()}
+async function withExportState(fn){exporting=true;qCancel=false;previewEnd=null;v.pause();$('export').disabled=true;$('qrun').disabled=true;$('qadd').disabled=true;$('qcancel').hidden=false;$('share').hidden=true;let wl=null;try{if(navigator.wakeLock)wl=await navigator.wakeLock.request('screen')}catch(e){}
+ try{await fn()}catch(err){const can=qCancel||(err&&err.message)==='anulat';msg((can?'Export anulat.':'Export eșuat: '+(err&&err.message||err))+((err&&err.extra)||''),!can)}
+ finally{exporting=false;wcRender=false;qCancel=false;batchSink=null;outTag='';$('export').disabled=false;$('qadd').disabled=false;$('qcancel').hidden=true;try{wl&&wl.release()}catch(e){}renderQueue();size()}}
+$('export').onclick=async()=>{if(exporting)return;if(!dur){msg('Încarcă mai întâi un fișier audio sau video.',true);return}
+ const e=checkSel(sel[0],sel[1]);if(e){msg(e,true);return}await withExportState(doExport)};
+$('qcancel').onclick=()=>{qCancel=true;anaCancel=true;msg('Se anulează…')};
+/* ---------- ZIP (fără compresie) ---------- */
+const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u8){let c=0xFFFFFFFF;for(let i=0;i<u8.length;i++)c=CRCT[(c^u8[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
+async function makeZip(files){const parts=[],cen=[];let off=0;const enc=new TextEncoder();
+ for(const f of files){const data=new Uint8Array(await f.blob.arrayBuffer()),nm=enc.encode(f.name),crc=crc32(data);await yieldUI();
+  const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(12,0x21,true);lh.setUint32(14,crc,true);lh.setUint32(18,data.length,true);lh.setUint32(22,data.length,true);lh.setUint16(26,nm.length,true);
+  parts.push(new Uint8Array(lh.buffer),nm,data);
+  const ch=new DataView(new ArrayBuffer(46));ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(14,0x21,true);ch.setUint32(16,crc,true);ch.setUint32(20,data.length,true);ch.setUint32(24,data.length,true);ch.setUint16(28,nm.length,true);ch.setUint32(42,off,true);
+  cen.push(new Uint8Array(ch.buffer),nm);off+=30+nm.length+data.length}
+ const cl=cen.reduce((a,x)=>a+x.length,0),end=new DataView(new ArrayBuffer(22));end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);end.setUint32(12,cl,true);end.setUint32(16,off,true);
+ return new Blob([...parts,...cen,new Uint8Array(end.buffer)],{type:'application/zip'})}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+/* ---------- coadă de fragmente ---------- */
+function qSan(a,d){if(!Array.isArray(a))return[];return a.filter(q=>q&&isFinite(q.t0)&&isFinite(q.t1)&&q.t1>q.t0&&q.t0>=0&&q.t1<=d+0.5&&typeof q.title==='string').slice(0,20).map(q=>({t0:+q.t0,t1:+q.t1,title:q.title.slice(0,200),sub:String(q.sub||'').slice(0,200),caps:String(q.caps||'').slice(0,20000),wt:q.wt&&typeof q.wt==='object'?q.wt:{}}))}
+function renderQueue(){const box=$('qlist');box.textContent='';$('qrun').disabled=exporting||!QUEUE.length;
+ if(!QUEUE.length){const p=document.createElement('div');p.className='hint';p.textContent='Coada e goală.';box.appendChild(p);return}
+ const mk=(txt,lab,fn,dis)=>{const b=document.createElement('button');b.textContent=txt;b.setAttribute('aria-label',lab);b.disabled=!!dis||exporting;b.onclick=fn;b.style.flex='0 0 auto';b.style.minWidth='44px';return b};
+ QUEUE.forEach((q,i)=>{const row=document.createElement('div');row.className='row';row.style.marginTop='4px';const sp=document.createElement('span');sp.style.flex='3 1 160px';sp.textContent=(i+1)+'. '+fmt(q.t0)+'–'+fmt(q.t1)+' · '+q.title;
+  row.append(sp,mk('▲','Mută în sus',()=>{[QUEUE[i-1],QUEUE[i]]=[QUEUE[i],QUEUE[i-1]];renderQueue();saveSoon()},i===0),mk('▼','Mută în jos',()=>{[QUEUE[i+1],QUEUE[i]]=[QUEUE[i],QUEUE[i+1]];renderQueue();saveSoon()},i===QUEUE.length-1),mk('Editează','Încarcă în editor',()=>qLoad(i)),mk('✕','Șterge din coadă',()=>{QUEUE.splice(i,1);renderQueue();saveSoon()}));box.appendChild(row)})}
+function qLoad(i){const q=QUEUE[i];if(!q||exporting)return;sel=[q.t0,q.t1];$('title').value=q.title;$('sub').value=q.sub;$('caps').value=q.caps;WT=Object.assign({},q.wt);capKey=null;syncSel();try{v.currentTime=q.t0}catch(e){}msg('Fragmentul '+(i+1)+' a fost încărcat în editor.')}
+$('qadd').onclick=()=>{if(exporting)return;if(!dur){msg('Încarcă mai întâi un fișier.',true);return}const e=checkSel(sel[0],sel[1]);if(e){msg(e,true);return}if(QUEUE.length>=20){msg('Coada poate avea cel mult 20 de fragmente.',true);return}
+ const caps=$('caps').value,wt={};caps.replace(/\r/g,'').split('\n').forEach(l=>{const m=l.match(/^\s*(\d+:\d+(?::\d+)?(?:[.,]\d+)?)\s+(.+)$/);if(m){const k=m[1]+'|'+m[2].trim();if(WT[k])wt[k]=WT[k]}});
+ QUEUE.push({t0:sel[0],t1:sel[1],title:$('title').value,sub:$('sub').value,caps,wt});renderQueue();saveSoon();msg('Fragment adăugat în coadă ('+QUEUE.length+').')};
+$('qrun').onclick=async()=>{if(exporting)return;if(!dur||!curFile){msg('Încarcă mai întâi un fișier.',true);return}if(!QUEUE.length){msg('Coada e goală. Alege un fragment și apasă „+ Adaugă în coadă”.',true);return}
+ for(let i=0;i<QUEUE.length;i++){const q=QUEUE[i],e=checkSel(q.t0,Math.min(q.t1,dur));if(e){msg('Fragmentul '+(i+1)+': '+e,true);return}}
+ const zip=$('qzip').checked,keep={sel:[...sel],title:$('title').value,sub:$('sub').value,caps:$('caps').value,wt:WT},outs=[],n=QUEUE.length;
+ await withExportState(async()=>{let fail=null;
+  try{for(let i=0;i<n;i++){if(qCancel)throw new Error('anulat');const q=QUEUE[i];sel=[q.t0,Math.min(q.t1,dur)];$('title').value=q.title;$('sub').value=q.sub;$('caps').value=q.caps;WT=Object.assign({},q.wt);capKey=null;normSel();
+    $('qprog').textContent='Fragment '+(i+1)+' din '+n+'…';outTag='reel-'+String(i+1).padStart(2,'0');batchSink=[];
+    await doExport();const got=batchSink.pop();batchSink=null;if(!got)throw new Error('fragmentul '+(i+1)+' nu a produs fișier');
+    const name=outTag+'.'+got.ext;outs.push({name,blob:got.blob});if(!zip){downloadBlob(got.blob,name);await sleep(500)}}}
+  catch(e){fail=e}
+  finally{sel=keep.sel;$('title').value=keep.title;$('sub').value=keep.sub;$('caps').value=keep.caps;WT=keep.wt;capKey=null;normSel();saveSoon();batchSink=null;outTag=''}
+  let note='';
+  if(outs.length&&zip){const zb=await makeZip(outs);downloadBlob(zb,'reels.zip');try{lastFile=new File([zb],'reels.zip',{type:'application/zip'});$('share').hidden=!(navigator.canShare&&navigator.canShare({files:[lastFile]}))}catch(e){$('share').hidden=true}note=outs.length+' reels în reels.zip ('+(zb.size/MB).toFixed(1)+' MB)'}
+  else if(outs.length)note=outs.length+' fișiere descărcate'+(outs.length>1?'. Dacă browserul a blocat descărcările multiple, permite-le sau bifează ZIP-ul':'');
+  $('qprog').textContent=fail?'Oprit după '+outs.length+' din '+n+'.':'Gata: '+note+'.';
+  if(fail){fail.extra=outs.length?' Am păstrat '+outs.length+' fragmente finalizate ('+note+').':'';throw fail}
+  msg('Gata: '+note+'.')})};
+
+/* ---------- cache de transcrieri (IndexedDB; memorie ca rezervă) ---------- */
+const TC={db:null,mem:new Map(),MAXB:6*1048576,
+ open(){return new Promise(r=>{try{const q=indexedDB.open('decupaj-tr',1);q.onupgradeneeded=()=>q.result.createObjectStore('tr',{keyPath:'k'});q.onsuccess=()=>{TC.db=q.result;r(true)};q.onerror=()=>r(false);q.onblocked=()=>r(false)}catch(e){r(false)}})},
+ _tx(mode,fn){return new Promise(res=>{if(!TC.db)return res(null);try{const t=TC.db.transaction('tr',mode);const rq=fn(t.objectStore('tr'));t.oncomplete=()=>res(rq?rq.result:true);t.onerror=()=>res(null);t.onabort=()=>res(null)}catch(e){res(null)}})},
+ async get(k){if(TC.mem.has(k))return TC.mem.get(k);const r=await TC._tx('readonly',x=>x.get(k));if(r&&Array.isArray(r.words)){TC.mem.set(k,r.words);return r.words}return null},
+ async set(k,words){words=words.map(w=>({t:w.t,s:+(+w.s).toFixed(2),e:+(+w.e).toFixed(2)}));TC.mem.set(k,words);if(TC.mem.size>400)TC.mem.delete(TC.mem.keys().next().value);if(!TC.db)return;const sz=JSON.stringify(words).length;await TC._tx('readwrite',x=>x.put({k,words,t:Date.now(),sz}));TC.prune()},
+ async prune(){const all=await TC._tx('readonly',x=>x.getAll());if(!all)return;let tot=all.reduce((a,x)=>a+(x.sz||0),0);if(tot<=TC.MAXB)return;all.sort((a,b)=>a.t-b.t);const del=[];for(const x of all){if(tot<=TC.MAXB*.8)break;del.push(x.k);tot-=x.sz||0}if(del.length)await TC._tx('readwrite',x=>{del.forEach(k=>x.delete(k));return null})}};
+TC.open();
+const trKey=(a,b)=>[curName,curFile?curFile.size:0,a.toFixed(2),b.toFixed(2),$('asrmodel').value,$('asrlang').value].join('|');
+const epKey=()=>curName+'|'+(curFile?curFile.size:0);
+/* ---------- transcriere locală (Whisper în browser) ---------- */
+let ASR=null,ASRname='',ASRdev='wasm',gpuBad=false;
+try{if(navigator.gpu)$('gpurow').hidden=false}catch(e){}
+async function getAsr(model,onp,forceWasm){let want=(forceWasm||gpuBad||!navigator.gpu||!$('usegpu').checked)?'wasm':'webgpu';
+ if(ASR&&ASRname===model&&ASRdev===want)return ASR;
+ await verifiedText('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6',"sha384-ypqDKlGaciPzMZFxk0iPx9blYGxbZIWTqZX7f6BuiicO9rTfnXfprLBev5KE5OfK");const T=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6');T.env.allowLocalModels=false;
+ if(want==='webgpu'){try{const ad=await navigator.gpu.requestAdapter();if(!ad)throw new Error('fără adaptor WebGPU');
+   ASR=await T.pipeline('automatic-speech-recognition',model,{device:'webgpu',dtype:{encoder_model:'fp32',decoder_model_merged:'q8'},progress_callback:onp});ASRname=model;ASRdev='webgpu';return ASR}
+  catch(e){console.warn('WebGPU indisponibil, folosesc procesorul (wasm)',e);gpuBad=true;ASR=null;want='wasm'}}
+ ASR=await T.pipeline('automatic-speech-recognition',model,{device:'wasm',progress_callback:onp});ASRname=model;ASRdev='wasm';return ASR}
+async function asrRun(seg,opts){try{return await ASR(seg,opts)}catch(e){if(ASRdev==='webgpu'){console.warn('WebGPU a eșuat la rulare, trec la wasm',e);gpuBad=true;const m=ASRname;ASR=null;await getAsr(m,null,true);return await ASR(seg,opts)}throw e}}
+function resampleTo16k(ch,rate){if(rate===16000)return ch;const ratio=rate/16000,n=Math.floor(ch.length/ratio),out=new Float32Array(n);for(let i=0;i<n;i++){const p=i*ratio,i0=Math.floor(p),f=p-i0;out[i]=ch[i0]*(1-f)+(ch[Math.min(i0+1,ch.length-1)])*f}return out}
+async function resample16kA(ch,rate){if(rate===16000)return ch;const ratio=rate/16000,n=Math.floor(ch.length/ratio),out=new Float32Array(n);for(let i=0;i<n;i++){const p=i*ratio,i0=Math.floor(p),f=p-i0;out[i]=ch[i0]*(1-f)+ch[Math.min(i0+1,ch.length-1)]*f;if((i&0x3ffff)===0&&i)await yieldUI()}return out}
+async function sgToPcm(sg,t0,t1){const rate=sg.sr,a0=Math.max(0,Math.floor((t0-sg.off)*rate)),b0=Math.min(sg.chs[0].length,Math.ceil((t1-sg.off)*rate));const m=new Float32Array(Math.max(0,b0-a0));
+ for(let c=0;c<sg.chs.length;c++){const d=sg.chs[c];for(let i=0;i<m.length;i++){m[i]+=d[a0+i]/sg.chs.length;if((i&0x7ffff)===0&&i)await yieldUI()}}
+ return resample16kA(m,rate)}
+async function pcm16k(t0,t1){return sgToPcm(await decodeSegment(t0,t1,16000,false),t0,t1)}
+async function asrWords(seg,fragLen,lang,note){const base={task:'transcribe',chunk_length_s:30,stride_length_s:5};if(lang!=='auto')base.language=lang;
+ const out=await asrRun(seg,Object.assign({},base,{return_timestamps:'word'}));let words=normWords(out.chunks);
+ if(!wordsValid(words,fragLen)){if(note)note('Timpii pe cuvânt nu sunt fiabili; folosesc timpii pe segmente…');const o2=await asrRun(seg,Object.assign({},base,{return_timestamps:true}));words=spreadSegments(o2.chunks)}
+ return words}
+if(IOS){try{$('asrmodel').value='Xenova/whisper-tiny'}catch(e){}}
+$('asr').onclick=async()=>{if(!dur||!curFile||asrBusy||exporting){if(!curFile)msg('Încarcă mai întâi podcastul.',true);return}
+ if(IOS&&!MI&&curFile.size>25*1048576){msg('Fișier prea mare pentru transcriere pe iPhone/iPad (peste 25 MB): memoria Safari ar închide pagina. Taie întâi un fragment mai scurt sau folosește un computer.',true);return}
+ if(IOS&&/small/.test($('asrmodel').value)){msg('Modelul „small” e prea greu pentru iPhone/iPad. Folosesc „tiny”.');$('asrmodel').value='Xenova/whisper-tiny'}
+ if(sel[1]-sel[0]<1){msg('Selectează mai întâi fragmentul de transcris.',true);return}
+ if(sel[1]-sel[0]>180){msg('Fragmentul e prea lung pentru transcriere (maxim 3 minute); scurtează-l.',true);return}
+ if(!MI&&curFile.size>(MOBILE?25:150)*1048576){msg('Fișierul e prea mare pentru transcriere în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți). Taie întâi un fragment sau convertește în M4A.',true);return}
+ if($('caps').value.trim()&&!confirm('Înlocuiești subtitrările existente cu transcrierea?'))return;
+ asrBusy=true;$('asr').disabled=true;$('ana').disabled=true;
+ try{const lang=$('asrlang').value,ck=trKey(sel[0],sel[1])+'|fr';let words=await TC.get(ck);
+  if(words&&words.length){msg('Transcriere găsită în memoria locală (același fișier, interval, model și limbă).')}
+  else{msg('Se decodează audio…');const seg=await pcm16k(sel[0],sel[1]),fragLen=seg.length/16000;
+   msg('Se încarcă modelul (la prima folosire se descarcă de pe internet)…');
+   await getAsr($('asrmodel').value,p=>{if(p&&p.status==='progress'&&typeof p.progress==='number')msg('Se descarcă modelul… '+Math.round(p.progress)+'%')});
+   msg('Se transcrie fragmentul… (poate dura de la câteva secunde la un minut)');
+   words=await asrWords(seg,fragLen,lang,msg);if(words.length)await TC.set(ck,words)}
+  if(!words.length)throw new Error('nu s-a detectat vorbire în fragment');
+  const lines=groupWords(words,sel[0]);WT={};
+  lines.forEach(l=>{WT[fmtd(l.s)+'|'+l.words.map(w=>w.t).join(' ')]=l.words});
+  $('caps').value=lines.map(l=>fmtd(l.s)+' '+l.words.map(w=>w.t).join(' ')).join('\n');capKey=null;saveSoon();
+  msg('Gata: '+lines.length+' linii de subtitrare. Verifică și corectează textul (dacă schimbi un rând, acela revine la subtitrare pe linie).')}
+ catch(err){msg('Transcrierea a eșuat: '+(err&&err.message||err),true)}
+ finally{asrBusy=false;$('asr').disabled=false;$('ana').disabled=false}};
+/* ---------- analiza întregului episod: sugestii după conținut ---------- */
+const KWS=['secret','adevar','incredibil','socant','niciodata','mereu','important','problema','solutia','ovni','ozn','extraterestr','dovada','dovezi','mister','descoperire','atentie','greseala','lectie','pericol','viitor','bani','dezvalu','neasteptat','surprinz','miracol','trucul','regula','prima data','ultima oara','de ce','cum sa','truth','incredible','shocking','never','always','problem','mistake','lesson','proof','discovery','warning','danger','future','money','ufo','alien','mystery','revealed','surprising','why','how to','rule','trick'];
+const normTxt=x=>String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function suggestContent(W){if(!W||W.length<12)return[];
+ const S=[];let st=0;for(let i=0;i<W.length;i++){const end=/[.!?…]["”»')\]]*$/.test(W[i].t)||(i+1<W.length&&W[i+1].s-W[i].e>1.2)||i===W.length-1||W[i].e-W[st].s>12;if(end){S.push({a:st,b:i});st=i+1}}
+ for(const x of S){const ws=W.slice(x.a,x.b+1),tx=normTxt(ws.map(w=>w.t).join(' '));x.t0=ws[0].s;x.t1=ws[ws.length-1].e;x.n=ws.length;x.q=(tx.match(/[?!]/g)||[]).length;x.dg=ws.filter(w=>/\d/.test(w.t)).length;let kc=0;for(const k of KWS){let p=0;while((p=tx.indexOf(k,p))>=0){kc++;p+=k.length}}x.kw=kc;let g=0;for(let i=x.a+1;i<=x.b;i++){const gp=W[i].s-W[i-1].e;if(gp>1)g+=gp}x.gap=g}
+ let p90=1,pre=null;if(ENV&&ENV.length>8){const so=Array.from(ENV).sort((a,b)=>a-b);p90=so[Math.floor(so.length*.9)]||1e-6;pre=new Float64Array(ENV.length+1);for(let i=0;i<ENV.length;i++)pre[i+1]=pre[i]+ENV[i]}
+ const eS=(a,b)=>{if(!pre)return 0;const i0=Math.max(0,Math.floor(a/.5)),i1=Math.min(ENV.length,Math.ceil(b/.5));if(i1<=i0)return 0;return Math.min(1.5,(pre[i1]-pre[i0])/(i1-i0)/p90)};
+ const cand=[];
+ for(let i=0;i<S.length;i++){let n=0,q=0,dg=0,kw=0,gp=0;for(let j=i;j<S.length;j++){const d=S[j].t1-S[i].t0;if(d>50)break;n+=S[j].n;q+=S[j].q;dg+=S[j].dg;kw+=S[j].kw;gp+=S[j].gap+(j>i?Math.max(0,S[j].t0-S[j-1].t1):0);if(d<25)continue;
+   const dens=Math.min(1,n/d/3),hook=(S[i].q>0||S[i].kw>0)?1:0,fit=1-Math.abs(d-37)/25;
+   const sc=1.2*dens+.9*Math.min(3,q)/3+.6*Math.min(3,dg)/3+1.4*Math.min(4,kw)/4+.5*hook+.4*fit-1.6*Math.min(1,gp/d)+.8*eS(S[i].t0,S[j].t1);
+   cand.push({i,j,sc,t0:S[i].t0,t1:S[j].t1})}}
+ cand.sort((a,b)=>b.sc-a.sc);const top=[];for(const c of cand){if(top.length>=5)break;if(top.some(o=>c.t0<o.t1&&o.t0<c.t1))continue;top.push(c)}
+ const res=top.sort((a,b)=>a.t0-b.t0).map(c=>{const ws=W.filter(w=>w.s>=c.t0-.01&&w.e<=c.t1+.01).slice(0,9).map(w=>w.t).join(' ');return{t0:Math.max(0,c.t0-.15),t1:Math.min(dur||c.t1+1,c.t1+.35),sc:c.sc,txt:ws+'…'}});for(let i=0;i+1<res.length;i++)if(res[i].t1>res[i+1].t0)res[i].t1=Math.max(res[i].t0+1,res[i+1].t0);return res}
+function renderSug(r,content){const box=$('sug');box.textContent='';
+ r.forEach((x,i)=>{const b=document.createElement('button');b.style.whiteSpace='normal';b.style.textAlign='left';b.style.height='auto';b.textContent=(i+1)+'. '+fmt(x.t0)+' – '+fmt(x.t1)+' ('+Math.round(x.t1-x.t0)+' s)'+(x.txt?' · „'+x.txt+'”':'');
+  b.onclick=()=>{sel=[x.t0,x.t1];syncSel();try{v.currentTime=x.t0}catch(e){}if(content&&EPI)fillFromEpisode(x.t0,x.t1)};box.appendChild(b)})}
+function fillFromEpisode(t0,t1){const ws=EPI.words.filter(w=>w.s>=t0-.05&&w.e<=t1+.4);if(!ws.length)return;if($('caps').value.trim()&&!confirm('Înlocuiești subtitrările existente cu transcrierea acestui moment?'))return;
+ const lines=groupWords(ws.map(w=>({t:w.t,s:w.s,e:w.e})),0);WT={};lines.forEach(l=>{WT[fmtd(l.s)+'|'+l.words.map(w=>w.t).join(' ')]=l.words});$('caps').value=lines.map(l=>fmtd(l.s)+' '+l.words.map(w=>w.t).join(' ')).join('\n');capKey=null;saveSoon()}
+$('anacancel').onclick=()=>{anaCancel=true;msg('Se oprește analiza după bucata curentă…')};
+$('ana').onclick=async()=>{if(!dur||!curFile||asrBusy||exporting){if(!curFile)msg('Încarcă mai întâi podcastul.',true);return}
+ if(IOS&&!MI&&curFile.size>25*1048576){msg('Fișier prea mare pentru analiză pe iPhone/iPad (peste 25 MB). Folosește un computer sau un MP4/M4A.',true);return}
+ if(IOS&&/small/.test($('asrmodel').value))$('asrmodel').value='Xenova/whisper-tiny';
+ if(!MI&&curFile.size>(MOBILE?25:150)*1048576){msg('Fișierul e prea mare pentru analiză în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți).',true);return}
+ const lim=(MOBILE?20:90)*60,lim2=MI?lim:Math.min(lim,(MOBILE?8:30)*60),T=Math.min(dur,lim2),note=T<dur-1?' Analizez doar primele '+Math.round(T/60)+' minute'+(MI?'':' (fișierele care nu sunt MP4/M4A/MOV se decodează întregi în memorie)')+'.':'';
+ asrBusy=true;anaCancel=false;$('ana').disabled=true;$('asr').disabled=true;$('anacancel').hidden=false;$('sug').textContent='';
+ try{const lang=$('asrlang').value;msg('Se încarcă modelul (la prima folosire se descarcă de pe internet)…');
+  await getAsr($('asrmodel').value,p=>{if(p&&p.status==='progress'&&typeof p.progress==='number')msg('Se descarcă modelul… '+Math.round(p.progress)+'%')});
+  const CH=60,PAD=1.5,nCh=Math.ceil(T/CH);let all=[],hits=0,full=null;
+  if(!MI){msg('Se decodează audio…');full=await decodeSegment(0,T,16000,false)}
+  for(let k=0;k<nCh;k++){if(anaCancel)throw new Error('anulat');const a=k*CH,b=Math.min(T,a+CH),key=trKey(a,b)+'|ep';let words=await TC.get(key);
+   if(words)hits++;else{const a2=Math.max(0,a-PAD),b2=Math.min(T,b+PAD),seg=full?await sgToPcm(full,a2,b2):await pcm16k(a2,b2);
+    if(seg.length<8000)words=[];else{const ws=await asrWords(seg,seg.length/16000,lang);words=ws.map(w=>({t:w.t,s:w.s+a2,e:w.e+a2})).filter(w=>{const mid=(w.s+w.e)/2;return mid>=a&&mid<b})}
+    await TC.set(key,words)}
+   all=all.concat(words);msg('Analizez episodul… '+Math.round((k+1)/nCh*100)+'% ('+fmt(b)+' din '+fmt(T)+')'+(hits?' · '+hits+' bucăți din memoria locală':''));await yieldUI()}
+  full=null;EPI={words:all,key:epKey()};const r=suggestContent(all);
+  if(!r.length){msg('Transcrierea e gata, dar nu am găsit destulă vorbire pentru sugestii.'+note);return}
+  renderSug(r,true);msg('Gata: '+all.length+' cuvinte transcrise. Am ales 5 momente după cuvinte, întrebări, cifre, cuvinte-cheie și energia vocii; un clic pe unul îl selectează și pune subtitrările.'+note)}
+ catch(err){const can=(err&&err.message)==='anulat';msg(can?'Analiza a fost oprită; bucățile gata sunt păstrate și o reluare e mai rapidă.':'Analiza a eșuat: '+(err&&err.message||err),!can)}
+ finally{asrBusy=false;anaCancel=false;$('ana').disabled=false;$('asr').disabled=false;$('anacancel').hidden=true}};
+
+document.querySelectorAll('label').forEach(l=>{const n=l.nextElementSibling;if(n&&n.id&&!l.htmlFor)l.htmlFor=n.id});
+
+$('supp').onclick=async()=>{const f=[];try{f.push('VideoEncoder:'+(typeof VideoEncoder!=='undefined'),'AudioEncoder:'+(typeof AudioEncoder!=='undefined'),'MediaRecorder:'+(typeof MediaRecorder!=='undefined'),'speechSynthesis:'+(typeof speechSynthesis!=='undefined'),'indexedDB:'+(typeof indexedDB!=='undefined'),'webgpu:'+!!navigator.gpu,'DecompressionStream:'+(typeof DecompressionStream!=='undefined'))}catch(e){}
+ const t=['Aplicație: '+document.title,'Versiune: '+APPV,'Browser: '+navigator.userAgent,'Ecran: '+screen.width+'x'+screen.height+' @'+(window.devicePixelRatio||1),'Funcții: '+f.join(' '),'Ultimele erori: '+(__errs.slice(-10).join(' | ')||'niciuna')].join('\n');
+ let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){}
+ if(!ok){let ta=document.getElementById('supptxt');if(!ta){ta=document.createElement('textarea');ta.id='supptxt';ta.setAttribute('aria-label','Detalii pentru suport');ta.style.cssText='width:100%;height:9em';document.querySelector('.foot').after(ta)}ta.value=t;ta.focus();ta.select();try{ok=document.execCommand('copy')}catch(e){}}
+ const b=$('supp');const o=b.textContent;b.textContent=ok?'✓ Copiat':'Copiază manual textul de mai sus';setTimeout(()=>b.textContent=o,2500)};
+try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+/* ---------- traducere RO/EN (dicționar + observator; textele noi se traduc automat) ---------- */
+const I18N={"exact": {"DECUPAJ": "DECUPAJ", "reels verticale din podcast — offline, fără cont, fără încărcare pe server": "vertical reels from a podcast — offline, no account, nothing uploaded to a server", "0. Din link (YouTube, Vimeo, Dailymotion)": "0. From a link (YouTube, Vimeo, Dailymotion)", "Lipește linkul videoclipului": "Paste the video link", "Link video": "Video link", "Deschide playerul": "Open the player", "Player video": "Video player", "Poziție player: —": "Player position: —", "Început = acum": "Start = now", "Sfârșit = acum": "End = now", "Început (mm:ss)": "Start (mm:ss)", "01:12": "01:12", "Sfârșit (mm:ss)": "End (mm:ss)", "01:52": "01:52", "Aplică pe fișierul încărcat": "Apply to the loaded file", "Browserul nu poate extrage imaginea sau sunetul din playerele acestor site-uri (protecție între domenii și condițiile lor de utilizare), iar DECUPAJ nu descarcă videoclipuri de pe ele. Aici alegi doar momentele în playerul oficial. Pentru reel încarci apoi": "The browser cannot extract the image or sound from these sites' players (cross-domain protection and their terms of use), and DECUPAJ does not download videos from them. Here you only pick the moments in the official player. For the reel, then load", "fișierul videoclipului tău": "your own video file", "(de ex. descărcat din YouTube Studio, butonul Download de pe Vimeo sau din setările tale Dailymotion, unde ai dreptul) și selecția se aplică singură. Pentru materiale ale altora ai nevoie de acordul deținătorului drepturilor. Playerul se încarcă de pe internet.": "(e.g. downloaded from YouTube Studio, the Download button on Vimeo, or your Dailymotion settings, where you have the right to) and the selection is applied automatically. For other people's material you need the rights holder's consent. The player loads from the internet.", "Sau link direct către un fișier video/audio (mp4, m4a, mp3, webm… de pe serverul tău)": "Or a direct link to a video/audio file (mp4, m4a, mp3, webm… from your own server)", "https://serverul-tau.ro/podcast.mp4": "https://your-server.com/podcast.mp4", "Link direct către fișier": "Direct link to file", "Încarcă fișierul": "Load the file", "Funcționează doar dacă serverul permite accesul din alte pagini (CORS). Fișierul se descarcă în memoria browserului (maxim 500 MB pe computer, 100 MB pe telefon).": "Works only if the server allows access from other pages (CORS). The file is downloaded into browser memory (max 500 MB on computer, 100 MB on phone).", "1. Podcast": "1. Podcast", "Fișier podcast": "Podcast file", "Alege un fișier audio sau video (mp3, m4a, wav, mp4, webm…). Titlul, culorile și subtitrările se salvează automat în browser.": "Choose an audio or video file (mp3, m4a, wav, mp4, webm…). The title, colors and captions are saved automatically in the browser.", "2. Fragment": "2. Clip", "Unda sonoră a podcastului. Săgeți: mută poziția cu 5 secunde, Shift plus săgeți: 1 secundă. Tasta [ setează începutul, ] setează sfârșitul.": "Podcast waveform. Arrow keys: move position by 5 seconds, Shift plus arrows: 1 second. The [ key sets the start, ] sets the end.", "Trage pe undă ca să selectezi fragmentul sau trage de marginile lui ca să-l ajustezi; un simplu clic mută doar poziția de redare. Recomandat: 15–60 s.": "Drag on the waveform to select the clip, or drag its edges to adjust it; a simple click only moves the playback position. Recommended: 15–60 s.", "✨ Sugerează momente bune": "✨ Suggest good moments", "🔎 Analizează tot episodul": "🔎 Analyze the whole episode", "■ Oprește analiza": "■ Stop analysis", "„Analizează tot episodul” transcrie episodul pe bucăți de un minut (local, cu Whisper) și alege momentele după cuvinte, întrebări, cifre și cuvinte-cheie. Durează; poți opri oricând, iar bucățile gata se păstrează.": "“Analyze the whole episode” transcribes the episode in one-minute chunks (locally, with Whisper) and picks moments by words, questions, numbers and keywords. It takes a while; you can stop anytime, and finished chunks are kept.", "▶ Previzualizare": "▶ Preview", "■ Stop": "■ Stop", "3. Aspect": "3. Look", "Format": "Format", "Reels / TikTok / Shorts 9:16": "Reels / TikTok / Shorts 9:16", "Instagram 4:5": "Instagram 4:5", "Pătrat 1:1": "Square 1:1", "Orizontal 16:9": "Landscape 16:9", "Titlu": "Title", "Subtitlu / invitat": "Subtitle / guest", "Fundal 1": "Background 1", "Fundal 2": "Background 2", "Accent": "Accent", "Imagine copertă (opțional)": "Cover image (optional)", "Stil undă": "Wave style", "Bare": "Bars", "Linie": "Line", "Cerc": "Circle", "Logo (opțional, de preferat PNG transparent)": "Logo (optional, transparent PNG preferred)", "Logo": "Logo", "Colț logo": "Logo corner", "Sus dreapta": "Top right", "Sus stânga": "Top left", "Jos dreapta": "Bottom right", "Jos stânga": "Bottom left", "Mărime logo": "Logo size", "Cadru final (ultimele 2 secunde)": "End card (last 2 seconds)", "Text cadru final": "End card text", "Audio la export. Cer recodarea sunetului, deci AAC-ul nu se mai copiază direct din fișier:": "Audio on export. These require re-encoding the sound, so the AAC is no longer copied directly from the file:", "Normalizează volumul": "Normalize volume", "Fade in/out audio (0,3 s)": "Audio fade in/out (0.3 s)", "Reducere zgomot grav (filtru trece-sus 80 Hz)": "Low-rumble reduction (80 Hz high-pass filter)", "Podcast video detectat.": "Video podcast detected.", "Aspect video": "Video layout", "Video în cadru, titlu deasupra": "Video in frame, title above", "Video întreg, fundal estompat": "Full video, blurred background", "Video pe tot ecranul": "Video full screen", "Încadrare orizontală (unde e vorbitorul)": "Horizontal framing (where the speaker is)", "Zoom": "Zoom", "Arată și unda sonoră": "Also show the waveform", "4. Subtitrări": "4. Captions", "Stil subtitrări": "Caption style", "Clasic (casetă lată)": "Classic (wide box)", "Contur": "Outline", "Casetă pe rând": "Box per line", "Cuvânt evidențiat": "Highlighted word", "Minimal": "Minimal", "Poziție": "Position", "Jos": "Bottom", "Mijloc": "Middle", "Sus": "Top", "Mărime": "Size", "Mică": "Small", "Normală": "Normal", "Mare": "Large", "Foarte mare": "Very large", "Câte o linie: mm:ss text\nEx:\n01:12 Bine ați venit\n01:16 Astăzi vorbim despre OZN-uri\n(timpul e din podcast; se acceptă și SRT)": "One line each: mm:ss text\nE.g.:\n01:12 Welcome\n01:16 Today we talk about UFOs\n(time is from the podcast; SRT is also accepted)", "Subtitrări": "Captions", "+ Linie la poziția curentă": "+ Line at current position", "Importă subtitrări": "Import captions", "Model transcriere": "Transcription model", "Whisper base (~75 MB, recomandat)": "Whisper base (~75 MB, recommended)", "Whisper tiny (~40 MB, rapid)": "Whisper tiny (~40 MB, fast)", "Whisper small (~250 MB, mai exact)": "Whisper small (~250 MB, more accurate)", "Limbă": "Language", "Română": "Romanian", "Engleză": "English", "Franceză": "French", "Germană": "German", "Spaniolă": "Spanish", "Italiană": "Italian", "Maghiară": "Hungarian", "Automat": "Automatic", "Accelerare WebGPU (dacă browserul o permite; altfel se trece automat la procesor)": "WebGPU acceleration (if the browser allows; otherwise it falls back to the processor automatically)", "🎙 Transcrie fragmentul selectat": "🎙 Transcribe the selected clip", "Subtitrări pe cuvânt": "Word-by-word captions", "Transcrierea rulează în browser, doar pe fragmentul selectat. La prima folosire modelul se descarcă de pe internet (apoi rămâne în memoria browserului); restul aplicației rămâne offline. Dimensiunile sunt aproximative.": "Transcription runs in the browser, only on the selected clip. On first use the model is downloaded from the internet (then it stays in browser memory); the rest of the app stays offline. Sizes are approximate.", "5. Coadă de export": "5. Export queue", "Adaugă mai multe fragmente (fiecare cu titlul și subtitrările lui) și exportă-le pe rând, cu aceleași setări de aspect.": "Add several clips (each with its own title and captions) and export them one after another, with the same look settings.", "+ Adaugă în coadă": "+ Add to queue", "⬇ Exportă coada": "⬇ Export queue", "Descarcă totul într-un singur ZIP (recomandat pe telefon)": "Download everything as a single ZIP (recommended on phone)", "Previzualizare": "Preview", "Previzualizarea reelului": "Reel preview", "Arată marginile sigure (doar în previzualizare, nu apar în export)": "Show safe margins (preview only, they do not appear in the export)", "⬇ Exportă reel": "⬇ Export reel", "📤 Salvează / Partajează": "📤 Save / Share", "■ Anulează exportul": "■ Cancel export", "Pentru podcast video, cadrele apar în reel. La fișiere MP4/MOV/M4A cu AAC sunetul se copiază direct, fără recodare. Exportul încearcă mai întâi randarea directă în MP4 (H.264 + AAC), mai rapidă decât timpul real; dacă browserul nu o permite, trece la înregistrare în timp real (30 s de fragment = 30 s de așteptare, fila trebuie ținută deschisă) și produce .mp4 sau .webm, după browser.": "For video podcasts, the frames appear in the reel. For MP4/MOV/M4A files with AAC the sound is copied directly, without re-encoding. Export first tries direct rendering to MP4 (H.264 + AAC), faster than real time; if the browser does not allow it, it switches to real-time recording (30 s of clip = 30 s of waiting, the tab must stay open) and produces .mp4 or .webm, depending on the browser.", "🛟 Copiază detalii pentru suport": "🛟 Copy details for support", "DECUPAJ — reels din podcast": "DECUPAJ — reels from a podcast"}, "frag": [["Ai deschis fișierul local. Safari pe iPhone/iPad nu rulează corect pagini deschise din aplicația Fișiere: încarcă DECUPAJ.html pe un site HTTPS și deschide-l de acolo (exportul MP4 direct cere conexiune sigură).", "You opened the local file. Safari on iPhone/iPad does not run pages opened from the Files app correctly: upload DECUPAJ.html to an HTTPS site and open it from there (direct MP4 export needs a secure connection)."], ["Fișier prea mare pentru transcriere pe iPhone/iPad (peste 25 MB): memoria Safari ar închide pagina. Taie întâi un fragment mai scurt sau folosește un computer.", "File too large to transcribe on iPhone/iPad (over 25 MB): Safari's memory would close the page. First cut a shorter clip or use a computer."], [" cuvinte transcrise. Am ales 5 momente după cuvinte, întrebări, cifre, cuvinte-cheie și energia vocii; un clic pe unul îl selectează și pune subtitrările.", " words transcribed. I picked 5 moments by words, questions, numbers, keywords and voice energy; a click on one selects it and adds the captions."], ["iPhone/iPad: această versiune de iOS nu poate randa MP4 direct, așa că înregistrez în timp real. Ține ecranul aprins și fila deschisă până la final.", "iPhone/iPad: this iOS version cannot render MP4 directly, so I record in real time. Keep the screen on and the tab open until the end."], ["Fișierul e prea mare pentru transcriere în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți). Taie întâi un fragment sau convertește în M4A.", "The file is too large to transcribe in the browser (only MP4/M4A/MOV with AAC are read in chunks). First cut a clip or convert to M4A."], ["Acesta e un link de pagină (YouTube/Vimeo/Dailymotion), nu un fișier. Folosește secțiunea de mai sus pentru player, apoi încarcă fișierul tău.", "This is a page link (YouTube/Vimeo/Dailymotion), not a file. Use the section above for the player, then load your own file."], ["Sugestii bazate pe transcrierea episodului (cuvinte, întrebări, cifre, cuvinte-cheie) și pe energia vocii. Verifică înainte de export.", "Suggestions based on the episode transcript (words, questions, numbers, keywords) and on voice energy. Check before exporting."], ["Sugestii bazate pe energia vocii și pe pauze, nu pe sensul textului. Pentru alegere după conținut folosește „Analizează tot episodul”.", "Suggestions based on voice energy and pauses, not on the meaning of the text. To choose by content use “Analyze the whole episode”."], ["Acest browser nu poate înregistra video din pagină. Pe iPhone/iPad ai nevoie de iOS 14.5 sau mai nou; altfel folosește un computer.", "This browser cannot record video from the page. On iPhone/iPad you need iOS 14.5 or newer; otherwise use a computer."], ["Dispozitiv cu putere mică: la 1080×1920 pot apărea cadre pierdute. Pentru un rezultat sigur folosește un computer sau formatul 1:1.", "Low-power device: at 1080×1920 some frames may be dropped. For a safe result use a computer or the 1:1 format."], [" — de obicei serverul nu permite accesul din alte pagini (CORS). Descarcă fișierul și încarcă-l de la secțiunea 1.", " — usually the server does not allow access from other pages (CORS). Download the file and load it in section 1."], [" linii de subtitrare. Verifică și corectează textul (dacă schimbi un rând, acela revine la subtitrare pe linie).", " caption lines. Check and correct the text (if you change a line, it goes back to a per-line caption)."], ["Pentru fișiere foarte mari nu analizez sunetul; folosește „Analizează tot episodul” sau alege momentele manual.", "For very large files I do not analyze the sound; use “Analyze the whole episode” or pick the moments by hand."], ["Browserul nu poate citi acest fișier (sau nu are durată, ca unele înregistrări webm). Încearcă mp3/m4a/mp4.", "The browser cannot read this file (or it has no duration, like some webm recordings). Try mp3/m4a/mp4."], ["Fișier prea mare pentru analiză pe iPhone/iPad (peste 25 MB). Folosește un computer sau un MP4/M4A.", "File too large to analyze on iPhone/iPad (over 25 MB). Use a computer or an MP4/M4A."], [" Pe iPhone/iPad apasă „Salvează / Partajează” › Salvează videoclipul, ca să ajungă în Fotografii.", " On iPhone/iPad tap “Save / Share” › Save video, so it lands in Photos."], ["Fișierul e prea mare pentru analiză în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți).", "The file is too large to analyze in the browser (only MP4/M4A/MOV with AAC are read in chunks)."], ["fișier prea mare pentru decodare în browser (doar MP4/M4A/MOV cu AAC se citesc pe bucăți)", "file too large to decode in the browser (only MP4/M4A/MOV with AAC are read in chunks)"], ["Transcriere găsită în memoria locală (același fișier, interval, model și limbă).", "Transcript found in local memory (same file, range, model and language)."], ["Analiza a fost oprită; bucățile gata sunt păstrate și o reluare e mai rapidă.", "The analysis was stopped; finished chunks are kept and a resume is faster."], [" · dacă nu se actualizează, scrie momentele de mână în câmpurile de mai jos", " · if it does not update, type the moments by hand in the fields below"], ["Fragmentul e prea lung pentru transcriere (maxim 3 minute); scurtează-l.", "The clip is too long to transcribe (maximum 3 minutes); shorten it."], ["Se transcrie fragmentul… (poate dura de la câteva secunde la un minut)", "Transcribing the clip… (may take from a few seconds to a minute)"], [" (fișierele care nu sunt MP4/M4A/MOV se decodează întregi în memorie)", " (files that are not MP4/M4A/MOV are decoded whole into memory)"], ["Transcrierea e gata, dar nu am găsit destulă vorbire pentru sugestii.", "Transcription is done, but I did not find enough speech for suggestions."], ["Se încarcă modelul (la prima folosire se descarcă de pe internet)…", "Loading the model (on first use it is downloaded from the internet)…"], ["Înlocuiești subtitrările existente cu transcrierea acestui moment?", "Replace the existing captions with the transcript of this moment?"], ["Așteaptă să se termine transcrierea înainte să schimbi fișierul.", "Wait for the transcription to finish before changing the file."], ["Coada e goală. Alege un fragment și apasă „+ Adaugă în coadă”.", "The queue is empty. Pick a clip and press “+ Add to queue”."], ["Timpii pe cuvânt nu sunt fiabili; folosesc timpii pe segmente…", "Per-word timings are unreliable; using segment timings…"], ["Biblioteca externă are altă amprentă decât cea așteptată (", "The external library has a different fingerprint than expected ("], ["Opțiunile audio cer recodare: nu mai copiez AAC-ul direct.", "The audio options require re-encoding: I no longer copy the AAC directly."], ["Selecția salvată pentru acest fișier a fost restaurată.", "The selection saved for this file was restored."], ["Selecția aleasă în player a fost aplicată fragmentului.", "The selection made in the player was applied to the clip."], ["Încarcă mai întâi fișierul videoclipului (secțiunea 1).", "First load your video file (section 1)."], [" (fișier mare: unda nu e desenată, folosește minutele)", " (large file: the waveform is not drawn, use the minutes)"], ["). Poate fi o versiune modificată. Continui oricum?", "). It may be a modified version. Continue anyway?"], ["Introdu un link care începe cu http:// sau https://", "Enter a link starting with http:// or https://"], ["Înlocuiești subtitrările existente cu transcrierea?", "Replace the existing captions with the transcript?"], ["Linkul nu pare de YouTube, Vimeo sau Dailymotion.", "The link does not look like YouTube, Vimeo or Dailymotion."], ["encoderul a folosit cadre B (ordine neașteptată)", "the encoder used B-frames (unexpected order)"], ["fișier trunchiat sau corupt (citire incompletă)", "truncated or corrupt file (incomplete read)"], ["encoderul nu a furnizat configurația codecului", "the encoder did not provide the codec configuration"], ["Selectează un fragment de cel puțin o secundă.", "Select a clip of at least one second."], ["Selectează mai întâi fragmentul de transcris.", "First select the clip to transcribe."], ["Fișier nesuportat sau fără durată cunoscută.", "Unsupported file or unknown duration."], ["Completează un început și un sfârșit valide.", "Fill in a valid start and end."], ["Încarcă mai întâi un fișier audio sau video.", "First load an audio or video file."], ["Se procesează audio (volum, fade, filtru)…", "Processing audio (volume, fade, filter)…"], ["Coada poate avea cel mult 20 de fragmente.", "The queue can hold at most 20 clips."], [", ca memoria browserului să nu se umple.", ", so the browser memory does not fill up."], ["WebCodecs indisponibil în acest browser", "WebCodecs is unavailable in this browser"], ["Se oprește analiza după bucata curentă…", "Stopping the analysis after the current chunk…"], ["Fișierul e prea scurt pentru sugestii.", "The file is too short for suggestions."], ["Fragmentul e prea lung pentru export (", "The clip is too long to export ("], ["). Trec la înregistrarea în timp real…", "). Switching to real-time recording…"], ["WebGPU a eșuat la rulare, trec la wasm", "WebGPU failed at run time, switching to wasm"], [" · audio AAC citit direct din fișier", " · AAC audio read directly from the file"], ["nu s-a detectat vorbire în fragment", "no speech detected in the clip"], ["% — nu închide și nu ascunde fila", "% — do not close or hide the tab"], ["Randarea MP4 directă nu a mers (", "Direct MP4 rendering did not work ("], ["Copiază manual textul de mai sus", "Copy the text above manually"], ["Se înregistrează în timp real… ", "Recording in real time… "], ["Nu am putut încărca fișierul: ", "Could not load the file: "], ["Imaginea nu a putut fi citită.", "The image could not be read."], ["Încarcă mai întâi un fișier.", "First load a file."], ["Se citește audio din fișier…", "Reading audio from the file…"], ["Încarcă mai întâi podcastul.", "First load the podcast."], ["Logoul nu a putut fi citit.", "The logo could not be read."], ["zonă acoperită de interfață", "area covered by the interface"], ["înregistrarea a ieșit goală", "the recording came out empty"], [" a fost încărcat în editor.", " was loaded into the editor."], ["Fragment adăugat în coadă (", "Clip added to the queue ("], [" bucăți din memoria locală", " chunks from local memory"], ["Selecția a fost aplicată.", "The selection was applied."], ["normalizare indisponibilă", "normalization unavailable"], ["integritate neconfirmată", "integrity not confirmed"], ["fișier peste limita de ", "file over the limit of "], ["fișierul sursă lipsește", "the source file is missing"], ["Transcrierea a eșuat: ", "Transcription failed: "], [" — se citește audio… ", " — reading audio… "], [" MB, peste limita de ", " MB, over the limit of "], [" reels în reels.zip (", " reels in reels.zip ("], ["Se descarcă modelul… ", "Downloading the model… "], ["Detalii pentru suport", "Details for support"], ["Eroare de desenare: ", "Drawing error: "], ["Partajarea a eșuat: ", "Sharing failed: "], ["Se pregătește audio…", "Preparing audio…"], ["serverul a răspuns ", "the server answered "], ["Nu s-a putut reda: ", "Could not play: "], [" nu a produs fișier", " did not produce a file"], [" fișiere descărcate", " files downloaded"], ["fără adaptor WebGPU", "no WebGPU adapter"], ["Se decodează audio…", "Decoding audio…"], ["Analizez episodul… ", "Analyzing the episode… "], [" A fost descărcat.", " It was downloaded."], ["Titlul episodului", "Episode title"], ["Gata — fișierul .", "Done — the file ."], ["Se randează MP4… ", "Rendering MP4… "], ["Încarcă în editor", "Load into editor"], ["Analiza a eșuat: ", "The analysis failed: "], ["Poziție player: ", "Player position: "], ["Șterge din coadă", "Remove from queue"], ["Ultimele erori: ", "Latest errors: "], ["Podcast video: ", "Video podcast: "], [" — se citește…", " — reading…"], ["Se conectează…", "Connecting…"], ["Export anulat.", "Export cancelled."], ["Export eșuat: ", "Export failed: "], ["Coada e goală.", "The queue is empty."], ["fișierul are ", "the file is "], ["Se descarcă… ", "Downloading… "], ["Abonează-te!", "Subscribe!"], ["Se anulează…", "Cancelling…"], [" Am păstrat ", " I kept "], ["Mută în sus", "Move up"], ["Mută în jos", "Move down"], ["Oprit după ", "Stopped after "], ["Aplicație: ", "Application: "], [" — durată ", " — duration "], ["Funcții: ", "Features: "], ["Poziție ", "Position "], ["Editează", "Edit"]], "pat": []};
+let LANG=(()=>{try{const v=localStorage.getItem('lang');if(v==='ro'||v==='en')return v}catch(e){}return /^ro/i.test(navigator.language||'ro')?'ro':'en'})();
+const I18NRE=I18N.pat.map(([r,t])=>[new RegExp(r),t]);
+function fragApply(y){let hit=false;for(const [ro,en] of I18N.frag){if(y.indexOf(ro)>=0){y=y.split(ro).join(en);hit=true}}return hit?y:null}
+function trStr(x){if(LANG!=='en'||!x)return x;const m=x.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];if(!core)return x;let o=I18N.exact[core];if(o!==undefined)return m[1]+o+m[3];
+ for(const [re,t] of I18NRE){if(re.test(core)){o=core.replace(re,t);const f=fragApply(o);return m[1]+(f===null?o:f)+m[3]}}
+ const f=fragApply(x);return f===null?x:f}
+const inBook=n=>{const e=n.nodeType===3?n.parentNode:n;return !!(e&&e.closest&&e.closest('#book')&&!e.closest('.hint'))};
+const TRATTR=['placeholder','aria-label','title','alt','aria-valuetext'];let trBusy=false;
+function trNode(n){if(inBook(n))return;if(n.nodeType===3){const p=n.parentNode&&n.parentNode.nodeName;if(p==='SCRIPT'||p==='STYLE'||p==='TEXTAREA')return;if(n.__en===undefined||n.data!==n.__en){n.__ro=n.data}const t=trStr(n.__ro);n.__en=t;if(n.data!==t)n.data=t}
+ else if(n.nodeType===1){if(n.nodeName==='SCRIPT'||n.nodeName==='STYLE')return;for(const a of TRATTR){if(!n.hasAttribute(a))continue;n.__a=n.__a||{};const cur=n.getAttribute(a),st=n.__a[a];if(!st||cur!==st.en)n.__a[a]={ro:cur,en:cur};const en=trStr(n.__a[a].ro);n.__a[a].en=en;if(cur!==en)n.setAttribute(a,en)}}}
+function trAll(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT,{acceptNode:x=>{if(x.nodeType!==1)return NodeFilter.FILTER_ACCEPT;if(x.id==='book')return NodeFilter.FILTER_SKIP;return(x.closest('#book')&&!x.closest('.hint'))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT}});let n=w.currentNode;while(n){trNode(n);n=w.nextNode()}}
+function applyLang(){trBusy=true;try{trAll(document.body);document.documentElement.lang=LANG;const t=document.title;if(!document.__roTitle)document.__roTitle=t;document.title=trStr(document.__roTitle)}finally{trBusy=false}const b=document.getElementById('langbtn');if(b){b.textContent=LANG==='en'?'RO':'EN';b.setAttribute('aria-label',LANG==='en'?'Schimbă în română':'Switch to English')}}
+{const lb=document.createElement('button');lb.id='langbtn';lb.type='button';document.querySelector('.foot').appendChild(lb);lb.onclick=()=>{LANG=LANG==='en'?'ro':'en';try{localStorage.setItem('lang',LANG)}catch(e){}applyLang()};
+ let q=false;const mo=new MutationObserver(ms=>{if(trBusy||LANG!=='en'&&!q)return;trBusy=true;try{for(const m of ms){if(m.type==='characterData')trNode(m.target);else if(m.type==='attributes')trNode(m.target);else m.addedNodes.forEach(x=>{if(x.nodeType===3)trNode(x);else if(x.nodeType===1)trAll(x)})}}finally{trBusy=false}});
+ mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:TRATTR});applyLang()}
+</script>
+</body>
+</html>
