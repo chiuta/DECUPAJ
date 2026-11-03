@@ -28,7 +28,7 @@ const done=window.__done;
  hookBlob();sel=[0,2];syncSel();const seen=new Set();const iv=setInterval(()=>{const t=$('status').textContent;if(t)seen.add(t.replace(/\d+(\.\d+)?%?/g,'#').slice(0,50))},150);
  const t0=Date.now();$('export').click();
  const fin=await waitFor(()=>/Gata|eșuat|Eroare|anulat/i.test($('status').textContent)&&!exporting,240000);clearInterval(iv);
- const st=$('status').textContent;T('export reel terminat',fin&&/Gata/.test(st),{ms:Date.now()-t0,status:st.slice(0,120),paths:[...seen].slice(0,8)});
+ const st=$('status').textContent;T('export reel terminat',fin&&/Gata/.test(st),{ms:Date.now()-t0,status:st.slice(0,160),paths:[...seen].slice(0,6),ex:window.__exstat});
  const big=(window.__blobs||[]).filter(b=>b.size>20000).pop();let exportB64=null;
  if(big){T('blob de export produs',true,{size:big.size,type:big.type});exportB64=await b64(big)}else T('blob de export produs',false,'niciunul');
  // 5. coadă
