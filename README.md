@@ -2,9 +2,9 @@
 
 Reels verticale din podcast (audio sau video), direct în browser. Un singur fișier HTML, fără cont, fără server, fără watermark. Fișierele tale nu pleacă din dispozitiv.
 
-Făcut pentru ASFAN. Versiunea 11.
+Făcut pentru ASFAN. Versiunea 12.
 
-**Aplicația live (după activarea GitHub Pages):** https://chiuta.github.io/DECUPAJ/
+**Aplicația live:** https://decupaj.chiuta.ro/
 
 ## Ce face
 
@@ -16,7 +16,7 @@ Făcut pentru ASFAN. Versiunea 11.
 - **Logo, cadru final, margini sigure** pentru Instagram/TikTok (doar în previzualizare).
 - **Coadă de export:** mai multe fragmente, descărcate pe rând sau într-un ZIP.
 - **Export MP4** (H.264 + AAC) prin WebCodecs, cu înregistrare în timp real ca alternativă. La MP4/MOV/M4A cu AAC sunetul se copiază direct, fără recodare. Opțional: normalizare de volum, fade, filtru trece-sus.
-- Interfață în română și engleză. Funcționează offline ca PWA.
+- Interfață în 7 limbi (română, engleză, franceză, germană, spaniolă, italiană, maghiară), aleasă automat după browser. Funcționează offline ca PWA.
 
 ## Din link (YouTube, Vimeo, Dailymotion)
 
@@ -25,7 +25,7 @@ Aplicația nu descarcă videoclipuri de pe aceste site-uri: browserul nu permite
 ## Instalare
 
 - **Simplu:** deschide `index.html` cu dublu clic.
-- **PWA (instalare pe ecranul principal, offline):** pune fișierele pe un site HTTPS. Pe GitHub: Settings › Pages › Deploy from a branch › `main` / `(root)`.
+- **PWA (instalare pe ecranul principal, offline):** pune fișierele pe un site HTTPS. Aici: Pages, domeniul decupaj.chiuta.ro.
 - **iPhone/iPad:** Safari nu rulează corect pagini deschise din aplicația Fișiere. Folosește varianta HTTPS și „Adaugă pe ecranul principal”.
 
 ## Limite
@@ -45,3 +45,8 @@ Testat automat: sintaxă, jsdom, export MP4 în Chromium, 5 dimensiuni de ecran,
 ## Fișiere
 
 `index.html` (aplicația), `sw.js` (service worker), `manifest.webmanifest`, icoane.
+
+## Istoric
+
+- **v12** — audit adversarial: reguli de pronunție cu cratimă dezactivau tot dicționarul (LECTOR); semnele de carte cu stocare coruptă aruncau excepție; importul unei copii ostile bloca pagina ~15 s (acum limite: 500 cărți, 5000 capitole); titlurile cărților și ale fragmentelor nu mai pot fi alterate de traducere. Interfață în 7 limbi.
+- **v11** — funcții noi, PWA, verificare de integritate pentru bibliotecile externe.
