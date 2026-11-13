@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "slug": "decupaj",
+  "name": "DECUPAJ — reels din podcast",
+  "version": "12",
+  "updated": "2026-11-03",
+  "description": "",
+  "egress": [
+    {
+      "host": "*.hf.co",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "*.huggingface.co",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "cas-bridge.xethub.hf.co",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "cdn.jsdelivr.net",
+      "via": [
+        "csp:connect-src",
+        "import()"
+      ]
+    },
+    {
+      "host": "cdnjs.cloudflare.com",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "geo.dailymotion.com",
+      "via": [
+        "csp:frame-src"
+      ]
+    },
+    {
+      "host": "huggingface.co",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "player.vimeo.com",
+      "via": [
+        "csp:frame-src"
+      ]
+    },
+    {
+      "host": "tessdata.projectnaptha.com",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "www.dailymotion.com",
+      "via": [
+        "csp:frame-src"
+      ]
+    },
+    {
+      "host": "www.youtube-nocookie.com",
+      "via": [
+        "csp:frame-src"
+      ]
+    },
+    {
+      "host": "www.youtube.com",
+      "via": [
+        "csp:frame-src"
+      ]
+    }
+  ],
+  "permissions": [
+    "navigator.share",
+    "speechSynthesis",
+    "clipboard",
+    "serviceWorker",
+    "indexedDB",
+    "localStorage",
+    "Web Crypto",
+    "WebGPU"
+  ],
+  "storageKeys": [
+    "decupaj.lang",
+    "lang"
+  ],
+  "sizeBytes": 447171,
+  "sha256": "eb6b067f702aa3af2ca4ea9e0b9e29d1ca5224ff76ec5bad34859c5fca49d224",
+  "csp": {
+    "present": true,
+    "directives": {
+      "object-src": "'none'",
+      "base-uri": "'none'",
+      "form-action": "'none'",
+      "connect-src": "'self' blob: data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://cas-bridge.xethub.hf.co https://tessdata.projectnaptha.com",
+      "frame-src": "https://www.youtube-nocookie.com https://www.youtube.com https://player.vimeo.com https://www.dailymotion.com https://geo.dailymotion.com",
+      "img-src": "'self' data: blob:",
+      "media-src": "'self' blob: data:",
+      "worker-src": "'self' blob: data:"
+    },
+    "scriptInline": "nerestricționat",
+    "connect": "'self' blob: data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://cas-bridge.xethub.hf.co https://tessdata.projectnaptha.com"
+  },
+  "features": {
+    "export": true,
+    "import": true,
+    "i18n": [
+      "en",
+      "fr",
+      "it",
+      "es",
+      "pt",
+      "hu",
+      "de"
+    ],
+    "pwa": {
+      "manifest": true,
+      "serviceWorker": true
+    },
+    "modules": [
+      "core",
+      "store",
+      "dialog",
+      "label",
+      "bundle"
+    ]
+  },
+  "kit": {
+    "version": "1.4.0",
+    "modules": [
+      "core",
+      "store",
+      "dialog",
+      "label",
+      "bundle"
+    ]
+  },
+  "selfSerializing": false,
+  "cspExceptions": [
+    {
+      "rule": "no-script-src",
+      "reason": "Scripturile de transcriere (Whisper) și playerele YouTube/Vimeo/Dailymotion se încarcă dinamic de la gazde externe; script-src nu poate fi restrâns fără a le bloca. Rețeaua rămâne limitată prin connect-src și frame-src."
+    }
+  ],
+  "egressNote": "Offline pentru decupaj, subtitrări și export. Rețeaua se folosește doar la cerere: playerele de link (YouTube/Vimeo/Dailymotion) și descărcarea modelului Whisper de transcriere."
+}

@@ -1,0 +1,6 @@
+{
+  "cspExceptions": [
+    {"rule": "no-script-src", "reason": "Scripturile de transcriere (Whisper) și playerele YouTube/Vimeo/Dailymotion se încarcă dinamic de la gazde externe; script-src nu poate fi restrâns fără a le bloca. Rețeaua rămâne limitată prin connect-src și frame-src."}
+  ],
+  "egressNote": "Offline pentru decupaj, subtitrări și export. Rețeaua se folosește doar la cerere: playerele de link (YouTube/Vimeo/Dailymotion) și descărcarea modelului Whisper de transcriere."
+}

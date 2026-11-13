@@ -1,79 +1,37 @@
 # DECUPAJ
 
-[![CI](https://github.com/chiuta/decupaj/actions/workflows/ci.yml/badge.svg)](https://github.com/chiuta/decupaj/actions/workflows/ci.yml) [![Mobil](https://github.com/chiuta/decupaj/actions/workflows/mobile.yml/badge.svg)](https://github.com/chiuta/decupaj/actions/workflows/mobile.yml) [![Site publicat](https://github.com/chiuta/decupaj/actions/workflows/live.yml/badge.svg)](https://github.com/chiuta/decupaj/actions/workflows/live.yml)
+**English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-Reels verticale din podcast (audio sau video), direct în browser. Un singur fișier HTML, fără cont, fără server, fără watermark. Fișierele tale nu pleacă din dispozitiv.
+Vertical reels from a podcast (audio or video), right in the browser. One HTML file, no account, no server, no watermark. Your files never leave the device.
 
-Făcut pentru ASFAN. Versiunea 12.
+**[Open the app →](https://decupaj.chiuta.ro/)**
 
-**Aplicația live:** https://decupaj.chiuta.ro/
+_Version: 12 · Last updated: 2026-11-03_
 
-## Ce face
+## Features
 
-- Alegi un fragment din podcast, cu unda sonoră, cu minutele sau cu tastatura.
-- **Sugestii de momente:** după energia vocii și pauze, sau, cu „Analizează tot episodul”, după transcriere (cuvinte, întrebări, cifre, cuvinte-cheie).
-- **Transcriere locală cu Whisper** (română și încă 7 limbi), cu subtitrări pe cuvânt și editare manuală. WebGPU când browserul îl are.
-- **Subtitrări stilizate:** 5 stiluri, 3 poziții, 4 mărimi.
-- **Podcast video:** 4 aspecte (9:16, 4:5, 1:1, 16:9), încadrare orizontală și zoom.
-- **Logo, cadru final, margini sigure** pentru Instagram/TikTok (doar în previzualizare).
-- **Coadă de export:** mai multe fragmente, descărcate pe rând sau într-un ZIP.
-- **Export MP4** (H.264 + AAC) prin WebCodecs, cu înregistrare în timp real ca alternativă. La MP4/MOV/M4A cu AAC sunetul se copiază direct, fără recodare. Opțional: normalizare de volum, fade, filtru trece-sus.
-- Interfață în 7 limbi (română, engleză, franceză, germană, spaniolă, italiană, maghiară), aleasă automat după browser. Funcționează offline ca PWA.
+- Pick an excerpt with the waveform, minutes or keyboard; moment suggestions by voice energy, or by transcription of the whole episode.
+- Local transcription with Whisper, word-level subtitles, 5 subtitle styles, logo and end card.
+- Formats 9:16, 4:5, 1:1 and 16:9; MP4 export (H.264 + AAC) through WebCodecs, with a queue and ZIP download.
+- Interface in 8 languages; works offline as a PWA.
 
-## Din link (YouTube, Vimeo, Dailymotion)
+## Usage
 
-Aplicația nu descarcă videoclipuri de pe aceste site-uri: browserul nu permite extragerea imaginii sau sunetului din playerele lor, iar condițiile lor de utilizare nu o permit. Poți alege momentele în playerul oficial și apoi încarci fișierul tău video, iar selecția se aplică singură.
+Open the page online, or download `index.html` and open it in a recent browser. No installation, no build.
 
-## Instalare
+## Limits
 
-- **Simplu:** deschide `index.html` cu dublu clic.
-- **PWA (instalare pe ecranul principal, offline):** pune fișierele pe un site HTTPS. Aici: Pages, domeniul decupaj.chiuta.ro.
-- **iPhone/iPad:** Safari nu rulează corect pagini deschise din aplicația Fișiere. Folosește varianta HTTPS și „Adaugă pe ecranul principal”.
+- Export up to 10 minutes on a computer and 3 on a phone, so memory does not fill up.
+- The Whisper model (40–250 MB) is downloaded once from the internet; YouTube/Vimeo/Dailymotion players load from the internet, and videos are never downloaded from them.
 
-## Limite
+## Privacy
 
-- Export maxim 10 minute pe computer și 3 pe telefon, ca să nu se umple memoria.
-- Fișierele care nu sunt MP4/M4A/MOV cu AAC se decodează întregi în memorie.
-- Modelul Whisper (40–250 MB) se descarcă o singură dată de pe internet; restul aplicației rămâne offline.
+Everything stays in your browser (localStorage / IndexedDB); no account, no tracking. Network only on request: link players and the Whisper model download.
 
-## Dependențe externe și verificare
+## Support
 
-Încărcate de pe jsDelivr, doar când folosești funcția: `@huggingface/transformers@3.7.6` (Whisper). Aplicația verifică amprenta SHA-384 înainte de import; la nepotrivire te întreabă. Verificarea la Whisper se face înainte de import, deci reduce riscul, nu îl elimină.
+If this is useful, you can [buy me a coffee](https://buymeacoffee.com/echo.of.the.strings).
 
-## Stare
+## License
 
-Testat automat: sintaxă, jsdom, export MP4 în Chromium, 5 dimensiuni de ecran, accesibilitate (axe, fără probleme). **Netestat în browser real:** WebGPU și Whisper real, Safari iOS, scorarea sugestiilor pe un podcast real. Raportează problemele cu butonul „Copiază detalii pentru suport” din pagină.
-
-## Fișiere
-
-`index.html` (aplicația), `sw.js` (service worker), `manifest.webmanifest`, icoane.
-
-## Istoric
-
-- **v12** — audit adversarial: reguli de pronunție cu cratimă dezactivau tot dicționarul (LECTOR); semnele de carte cu stocare coruptă aruncau excepție; importul unei copii ostile bloca pagina ~15 s (acum limite: 500 cărți, 5000 capitole); titlurile cărților și ale fragmentelor nu mai pot fi alterate de traducere. Interfață în 7 limbi.
-- **v11** — funcții noi, PWA, verificare de integritate pentru bibliotecile externe.
-
-## Teste automate (GitHub Actions)
-
-Fiecare modificare rulează aceleași scenarii (încărcare, export, bibliotecă, 7 limbi, accesibilitate axe, PWA offline) pe:
-
-- **Chromium, Firefox, WebKit** pe Linux; **WebKit (motorul Safari) și iPhone/iPad emulate** pe macOS; **Microsoft Edge** pe Windows și Linux; profiluri **Pixel 7** și **Galaxy S9+** (Android Chrome emulat).
-- **Safari real în simulatorul iOS** (macOS) și **Chrome real într-un emulator Android** (API 34 și 31) — workflow-ul „Mobil”.
-- **Lighthouse**, **CodeQL** (securitate), verificări statice (sintaxă, manifest, CSP, versiuni, amprente SHA-384 ale bibliotecilor) și o verificare zilnică a site-ului publicat.
-- La fiecare etichetă `v*` se publică automat o ediție cu pachetul PWA.
-
-Local: `cd tests && npm ci && node prepare.js && node run-playwright.js chromium` (alte proiecte: firefox, webkit, msedge, iphone, ipad, pixel, galaxy). Simulatoarele și emulatoarele nu reproduc memoria, bateria și vocile unui telefon real; rezultatele lor completează, nu înlocuiesc, o încercare pe dispozitiv.
-
-## Confidențialitate: ce rămâne pe dispozitiv și ce se contactează
-
-Nu există cont, server propriu, statistici sau reclame. **Conținutul tău (fișierele audio/video, transcrierile, subtitrările și reels-urile) este procesat local în browser și nu este încărcat nicăieri.** Totuși, aplicația contactează, la nevoie, aceste servicii externe, care pot vedea adresa IP a dispozitivului:
-
-- **cdn.jsdelivr.net**: biblioteca de transcriere (Transformers.js) și componentele ei, doar când folosești transcrierea.
-- **huggingface.co** (și rețelele lor de fișiere): modelele Whisper, descărcate o singură dată, doar când folosești transcrierea.
-- **YouTube, Vimeo, Dailymotion**: doar dacă lipești un link; playerul oficial încorporat vede vizita ta, conform politicilor lor. DECUPAJ nu descarcă videoclipuri din aceste servicii.
-
-Bibliotecile încărcate de pe CDN sunt verificate prin amprentă SHA-384 înainte de folosire. După prima descărcare, bibliotecile și modelele rămân în memoria browserului și funcționează offline. Aplicația nu poate seta antete HTTP de securitate (găzduirea pe GitHub Pages nu o permite), deci protecția se bazează pe politica de securitate din pagină (CSP) și pe verificarea amprentelor.
-
-## Licență și componente terțe
-
-Cod: [MIT](LICENSE). Aplicația folosește, încărcate la rulare și nepachetate în fișier: Transformers.js (Apache-2.0) și modelele Whisper ale OpenAI (MIT). Fiecare își păstrează licența proprie.
+MIT © Alexandru-Ionuț Chiuță (Alexio)
