@@ -95,7 +95,7 @@
     "lang"
   ],
   "sizeBytes": 447171,
-  "sha256": "eb6b067f702aa3af2ca4ea9e0b9e29d1ca5224ff76ec5bad34859c5fca49d224",
+  "sha256": "aeb5e71581f0ae6ab182ff254345e51e261da12c2117265c41c18ce9e5814d1a",
   "csp": {
     "present": true,
     "directives": {
@@ -136,7 +136,7 @@
     ]
   },
   "kit": {
-    "version": "1.4.0",
+    "version": "1.5.0",
     "modules": [
       "core",
       "store",
