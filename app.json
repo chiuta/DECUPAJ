@@ -88,14 +88,15 @@
     "indexedDB",
     "localStorage",
     "Web Crypto",
+    "WebGL",
     "WebGPU"
   ],
   "storageKeys": [
     "decupaj.lang",
     "lang"
   ],
-  "sizeBytes": 447171,
-  "sha256": "aeb5e71581f0ae6ab182ff254345e51e261da12c2117265c41c18ce9e5814d1a",
+  "sizeBytes": 499154,
+  "sha256": "3828406d09ecc598fb0118e1b4c9de414669957acaebaf9072f175e5a9bb549d",
   "csp": {
     "present": true,
     "directives": {
