@@ -10,7 +10,7 @@ Făcut pentru ASFAN. Versiunea 12.
 
 **Aplicația live:** https://decupaj.chiuta.ro/
 
-_Versiune: 13 · Ultima actualizare: 2026-11-15_
+_Versiune: 14 · Ultima actualizare: 2026-11-15_
 
 ## Ce face
 

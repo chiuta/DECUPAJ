@@ -2,7 +2,7 @@
   "schema": 1,
   "slug": "decupaj",
   "name": "DECUPAJ — reels din podcast",
-  "version": "13",
+  "version": "14",
   "updated": "2026-11-15",
   "description": "",
   "egress": [
@@ -96,7 +96,7 @@
     "lang"
   ],
   "sizeBytes": 504074,
-  "sha256": "b6f24786552adceb20bed7197c4abf0bf259cdb3468f380c5297057f977d8fe1",
+  "sha256": "76b93754689a546f36bc08ab22c525e88efba7192c01a029312f23a467274ead",
   "csp": {
     "present": true,
     "directives": {

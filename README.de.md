@@ -6,7 +6,7 @@ Vertikale Reels aus einem Podcast (Audio oder Video), direkt im Browser. Eine ei
 
 **[App öffnen →](https://decupaj.chiuta.ro/)**
 
-_Version: 13 · Zuletzt aktualisiert: 2026-11-15_
+_Version: 14 · Zuletzt aktualisiert: 2026-11-15_
 
 ## Funktionen
 

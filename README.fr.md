@@ -6,7 +6,7 @@ Des reels verticaux à partir d’un podcast (audio ou vidéo), directement dans
 
 **[Ouvrir l’application →](https://decupaj.chiuta.ro/)**
 
-_Version : 13 · Dernière mise à jour : 2026-11-15_
+_Version : 14 · Dernière mise à jour : 2026-11-15_
 
 ## Fonctionnalités
 
