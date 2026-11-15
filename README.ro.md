@@ -6,11 +6,9 @@
 
 Reels verticale din podcast (audio sau video), direct în browser. Un singur fișier HTML, fără cont, fără server, fără watermark. Fișierele tale nu pleacă din dispozitiv.
 
-Făcut pentru ASFAN. Versiunea 12.
-
 **Aplicația live:** https://decupaj.chiuta.ro/
 
-_Versiune: 14 · Ultima actualizare: 2026-11-15_
+_Versiune: 15 · Ultima actualizare: 2026-11-15_
 
 ## Ce face
 

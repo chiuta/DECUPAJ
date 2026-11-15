@@ -1,5 +1,9 @@
 # Changelog
 
+## 15 — 2026-11-15
+
+- Removed: the word “ASFAN”. The default subtitle is now just “Podcast”, and the sentence that named it is gone from the Romanian README. No other change.
+
 ## 14 — 2026-11-15
 
 - Changed: shared interface kit refreshed — the button inside notifications gets a larger touch target (40 px). No change to the app's own logic or texts.
