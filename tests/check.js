@@ -3,7 +3,8 @@ const fs=require('fs'),path=require('path'),vm=require('vm');
 const R=path.resolve(__dirname,'..');const rd=f=>fs.readFileSync(path.join(R,f),'utf8');
 let bad=0;const ok=(c,m)=>{console.log((c?'OK   ':'FAIL ')+m);if(!c)bad++};
 const html=rd('index.html');
-const scripts=[...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
+// doar scripturile JavaScript: blocurile de date (type="application/json": fff-info, traduceri) nu sunt cod și nu se parsează ca atare
+const scripts=[...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!/\btype=["'](?!module|text\/javascript)/i.test(m[1])).map(m=>m[2]);
 ok(scripts.length>0,'index.html are script inline ('+scripts.length+')');
 scripts.forEach((s,i)=>{try{new vm.Script(s,{filename:'inline-'+i+'.js'});ok(true,'sintaxă script #'+i+' ('+s.length+' caractere)')}catch(e){ok(false,'sintaxă script #'+i+': '+e.message)}});
 try{new vm.Script(rd('sw.js'),{filename:'sw.js'});ok(true,'sintaxă sw.js')}catch(e){ok(false,'sw.js: '+e.message)}
@@ -15,7 +16,8 @@ ok(/<meta[^>]+name=["']viewport["']/.test(html),'meta viewport');
 ok(/Content-Security-Policy/i.test(html),'meta Content-Security-Policy');
 ok(!/(?:\b(?:src|href|action)=["']|fetch\(["']|import\(["']|url\(["']?)http:\/\/(?!localhost|127\.0\.0\.1)/.test(html),'fără resurse încărcate prin http:// nesecurizat');
 for(const m of html.matchAll(/<script[^>]+src=["']https?:[^>]*>/g))ok(/integrity=/.test(m[0])&&/crossorigin/.test(m[0]),'script extern cu integrity+crossorigin: '+m[0].slice(0,80));
-const kb=Buffer.byteLength(html)/1024;ok(kb<420,'mărime index.html '+kb.toFixed(0)+' KB (buget 420 KB)');
+const kb=Buffer.byteLength(html)/1024;// buget 420 → 520 KB: kitul fff 1.5.0 (+17 KB) și motorul de texturi (+57 KB) sunt acum în pagină
+ok(kb<520,'mărime index.html '+kb.toFixed(0)+' KB (buget 520 KB)');
 const av=/const APPV='(v\d+)'/.exec(html),sv=/const V='(v\d+)'/.exec(rd('sw.js'));
 ok(av&&sv&&av[1]===sv[1],'versiune aplicație = versiune service worker ('+(av&&av[1])+' / '+(sv&&sv[1])+')');
 ok(fs.existsSync(path.join(R,'CNAME')),'CNAME există ('+(fs.existsSync(path.join(R,'CNAME'))?rd('CNAME').trim():'-')+')');
