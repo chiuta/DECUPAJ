@@ -1,5 +1,9 @@
 # Changelog
 
+## 15.1.0 — 2026-11-15
+
+- New: accessibility on every screen — the “Aa” button (text size, high contrast, no animations, readable text, underlined links, read aloud), a “Back to top” arrow and “Skip to content”; the window always fits the screen; the magnifier zoom and “fit screen” controls now sit on the left edge (fff-kit 1.6.0).
+
 ## 15 — 2026-11-15
 
 - Removed: the word “ASFAN”. The default subtitle is now just “Podcast”, and the sentence that named it is gone from the Romanian README. No other change.
