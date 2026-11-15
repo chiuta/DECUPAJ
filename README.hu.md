@@ -6,7 +6,7 @@ Függőleges reelek podcastból (hang vagy videó), közvetlenül a böngészőb
 
 **[Az alkalmazás megnyitása →](https://decupaj.chiuta.ro/)**
 
-_Verzió: 12 · Utolsó frissítés: 2026-11-03_
+_Verzió: 13 · Utolsó frissítés: 2026-11-15_
 
 ## Funkciók
 

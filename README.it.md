@@ -6,7 +6,7 @@ Reel verticali da un podcast (audio o video), direttamente nel browser. Un solo 
 
 **[Apri l’app →](https://decupaj.chiuta.ro/)**
 
-_Versione: 12 · Ultimo aggiornamento: 2026-11-03_
+_Versione: 13 · Ultimo aggiornamento: 2026-11-15_
 
 ## Funzioni
 
