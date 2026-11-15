@@ -2,7 +2,7 @@
   "schema": 1,
   "slug": "decupaj",
   "name": "DECUPAJ — reels din podcast",
-  "version": "15.1.0",
+  "version": "15.1.1",
   "updated": "2026-11-15",
   "description": "",
   "egress": [
@@ -95,8 +95,8 @@
     "decupaj.lang",
     "lang"
   ],
-  "sizeBytes": 541859,
-  "sha256": "4bafd3a7ff165024f12adff1e4c7becb591a3456784bc1c70ffd8beef0607a80",
+  "sizeBytes": 585357,
+  "sha256": "d92d8f06fa7d91634999df1f6085ff4f2919182ee7cc6bdb20558ca9fce258b7",
   "csp": {
     "present": true,
     "directives": {
@@ -132,18 +132,22 @@
       "core",
       "store",
       "dialog",
+      "view",
       "a11y",
+      "share",
       "label",
       "bundle"
     ]
   },
   "kit": {
-    "version": "1.6.0",
+    "version": "1.7.0",
     "modules": [
       "core",
       "store",
       "dialog",
+      "view",
       "a11y",
+      "share",
       "label",
       "bundle"
     ]

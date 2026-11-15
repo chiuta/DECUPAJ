@@ -6,7 +6,7 @@ Vertical reels from a podcast (audio or video), right in the browser. One HTML f
 
 **[Open the app →](https://decupaj.chiuta.ro/)**
 
-_Version: 15.1.0 · Last updated: 2026-11-15_
+_Version: 15.1.1 · Last updated: 2026-11-15_
 
 ## Features
 

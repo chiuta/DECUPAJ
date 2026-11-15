@@ -8,7 +8,7 @@ Reels verticale din podcast (audio sau video), direct în browser. Un singur fi�
 
 **Aplicația live:** https://decupaj.chiuta.ro/
 
-_Versiune: 15.1.0 · Ultima actualizare: 2026-11-15_
+_Versiune: 15.1.1 · Ultima actualizare: 2026-11-15_
 
 ## Ce face
 
