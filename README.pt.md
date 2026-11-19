@@ -6,7 +6,7 @@ Reels verticais a partir de um podcast (áudio ou vídeo), diretamente no navega
 
 **[Abrir a aplicação →](https://decupaj.chiuta.ro/)**
 
-_Versão: 15.1.2 · Última atualização: 2026-11-17_
+_Versão: 15.1.3 · Última atualização: 2026-11-20_
 
 ## Funcionalidades
 
