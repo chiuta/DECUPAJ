@@ -14,7 +14,7 @@ jobs:
   smoke:
     name: ${{ matrix.engine }}
     runs-on: ubuntu-26.04
-    timeout-minutes: 25
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -30,18 +30,15 @@ jobs:
           cache: npm
           cache-dependency-path: tests/package-lock.json
       - run: npm ci
-      # Instalarea motorului durează de obicei 25–60 s; uneori oglinda Ubuntu încetinește până la ~15 min
-      # și jobul era anulat de limita de timp (3 din ultimele 30 de rulări, doar la webkit). Fiecare
-      # încercare are limită proprie; descărcările apt întrerupte se reiau, deci reîncercarea e sigură.
-      - name: Instalează motorul (cu limită și reîncercări)
+      # Instalarea motorului durează de obicei 25–60 s, dar oglinda Ubuntu încetinește uneori (webkit
+      # descarcă ~140 MB de pachete apt): 3 din ultimele 30 de rulări au fost oprite de limita de 15 min,
+      # deși descărcarea avansa. Nu se pune limită pe încercare: o încercare oprită lasă apt-get orfan,
+      # cu lacătul dpkg ocupat, iar reîncercarea cade imediat. Rămân reîncercările apt de rețea și un
+      # timp total mai larg (timeout-minutes).
+      - name: Instalează motorul
         run: |
           printf 'Acquire::Retries "3";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' | sudo tee /etc/apt/apt.conf.d/99-retea >/dev/null
-          for i in 1 2 3; do
-            if timeout 300 npx playwright install --with-deps ${{ matrix.engine }}; then exit 0; fi
-            echo "::warning::încercarea $i de instalare a eșuat sau a depășit 5 minute; reiau"
-            sleep 5
-          done
-          exit 1
+          npx playwright install --with-deps ${{ matrix.engine }}
       - name: Așteaptă publicarea (la push)
         if: github.event_name == 'push'
         run: sleep 90
