@@ -3,7 +3,7 @@
   "slug": "decupaj",
   "name": "DECUPAJ — reels din podcast",
   "version": "15.1.3",
-  "updated": "2026-11-20",
+  "updated": "2026-11-22",
   "description": "",
   "egress": [
     {
@@ -94,8 +94,8 @@
     "decupaj.lang",
     "lang"
   ],
-  "sizeBytes": 648527,
-  "sha256": "ef92f28570be88baa539933357da212f4963c576be3a49ade0195c3f5998e192",
+  "sizeBytes": 648587,
+  "sha256": "d92a4d54089cb69a2c4a923fd0432b20fa14d8b96f9d70e92efb42e2cdaa3672",
   "csp": {
     "present": true,
     "directives": {
@@ -106,7 +106,8 @@
       "frame-src": "https://www.youtube-nocookie.com https://www.youtube.com https://player.vimeo.com https://www.dailymotion.com https://geo.dailymotion.com",
       "img-src": "'self' data: blob:",
       "media-src": "'self' blob: data:",
-      "worker-src": "'self' blob: data:"
+      "worker-src": "'self' blob: data:",
+      "upgrade-insecure-requests": "''"
     },
     "scriptInline": "nerestricționat",
     "connect": "'self' blob: data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://cas-bridge.xethub.hf.co https://tessdata.projectnaptha.com"
